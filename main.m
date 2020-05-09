@@ -3,27 +3,29 @@ intracellular experiment pipeline
 %}
 
 % Matlab startup commands
-clear; close all; clc;
+clear; close all; clc;      % clear your workspace, close figs, clear command window
 
-preSP = 20; postSP = 75;
-preLP = 600; postLP = 2000;
+preSP = 20;                 % first time step pre-stimulus window
+postSP = 75;                % last time step pre-stimulus window
+preLP = 600;                % first time-step post-stimulus window
+postLP = 2000;              % last time-step post-stimulus window
 plotSweeps = 1;
 missingCountLP = 1; missingCountSP = 1;
  
 % enter folder where data resides (each cell needs a folder)
 dataFolder{1} = 'C:\Users\EKuebler\OneDrive - The University of Western Ontario\NHP cell type database (JMT)\01 main';
-dataFolder{2} = 'D:\cell data';
+% dataFolder{2} = 'D:\cell data';
 
-start_trees; clear trees
+start_trees; clear trees    % TREES Toolkit (https://github.com/cuntzlab/treestoolbox)
 
 % generate structures for each cell (i.e., ephys and morph)
 for m = 1:length(dataFolder)                                                % folders denoting dataset
-    cellList = dir(dataFolder{m}); cellList = cellList(3:end);
+    cellList = dir(dataFolder{m}); cellList = cellList(3:end);              % list of cells to analyze
     Norig = length(cellList);                                               % number of cells in the dataset
-    for n = 1:Norig
-        disp(cellList(n).name)
+    for n = 1:Norig                                                         % for each cells
+        disp(cellList(n).name)                                              % display cell name
         fileList = dir([dataFolder{m},'\',cellList(n,1).name,'/']);         % could contain various protocols or morphology
-        fileList = fileList(3:end);
+        fileList = fileList(3:end);                                         
         LPcount = 1; SPcount = 1;
         for k = 1:length(fileList)
             exten = fileList(k,1).name(end-2:end);
