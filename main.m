@@ -9,8 +9,9 @@ preSP = 20;                 % first time step pre-stimulus window
 postSP = 75;                % last time step pre-stimulus window
 preLP = 600;                % first time-step post-stimulus window
 postLP = 2000;              % last time-step post-stimulus window
-plotSweeps = 1;
-missingCountLP = 1; missingCountSP = 1;
+plotSweeps = 1;             % set to '0' for no plots
+missingCountLP = 1;         % count cells with missing LP data
+missingCountSP = 1;         % count cells with missing SP data
  
 % enter folder where data resides (each cell needs a folder)
 dataFolder{1} = 'C:\Users\EKuebler\OneDrive - The University of Western Ontario\NHP cell type database (JMT)\01 main';

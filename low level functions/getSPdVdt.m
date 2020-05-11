@@ -19,6 +19,7 @@ end
 x = single(x);
 
 % smooth w filter?
+% output = smoothdata(dVdt,'gaussian',15,'SamplePoints',1:length(dVdt));
 
 dVdt = diff(x)/(1000/5e4);              % dV/dt at 50 kHz
 
