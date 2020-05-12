@@ -23,30 +23,30 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
         thresholdTime(i) = find(dVdt(1:maxdVdtTime(i)) < ...
             (0.05*maxdVdt(i)), 1, 'last');                                  % 5% of max dV/dt
         threshold(i) = LP.V{1,k}(thresholdTime(i));                         % store threshold for spike
-        hold on
-        plot(LP.V{1,k})
-        plot(dVdt)
-        scatter(maxdVdtTime(i),maxdVdt(i))
-        scatter(thresholdTime(i),threshold(i))
-        scatter(thresholdTime(i),dVdt(thresholdTime(i)))
-        xlim([thresholdTime(i)-10 sp.peakTime(i)+10])
-        pause(1)
-        close
+%         hold on
+%         plot(LP.V{1,k})
+%         plot(dVdt)
+%         scatter(maxdVdtTime(i),maxdVdt(i))
+%         scatter(thresholdTime(i),threshold(i))
+%         scatter(thresholdTime(i),dVdt(thresholdTime(i)))
+%         xlim([thresholdTime(i)-10 sp.peakTime(i)+10])
+%         pause(1)
+%         close
     elseif length(LP.putSpTimes2) > 1                                       % if more than one spike
         if i == 1                                                           % if this is first spike
             [maxdVdt(i), maxdVdtTime(i)] = max(dVdt(1:sp.peakTime(i)-1));   % max change in voltage
             thresholdTime(i) = find(dVdt(1:maxdVdtTime(i)) < ...
                 (0.05*maxdVdt(i)), 1, 'last');                              % 5% of max dV/dt
             threshold(i) = LP.V{1,k}(thresholdTime(i));                     % store threshold for spike
-            hold on
-            plot(LP.V{1,k})
-            plot(dVdt)
-            scatter(maxdVdtTime(i),maxdVdt(i))
-            scatter(thresholdTime(i),threshold(i))
-            scatter(thresholdTime(i),dVdt(thresholdTime(i)))
-            xlim([thresholdTime(i)-10 sp.peakTime(i)+10])
-            pause(1)
-            close
+%             hold on
+%             plot(LP.V{1,k})
+%             plot(dVdt)
+%             scatter(maxdVdtTime(i),maxdVdt(i))
+%             scatter(thresholdTime(i),threshold(i))
+%             scatter(thresholdTime(i),dVdt(thresholdTime(i)))
+%             xlim([thresholdTime(i)-10 sp.peakTime(i)+10])
+%             pause(1)
+%             close
         elseif i > 1                                                        % if this the second or greater spike
             temp_t = sp.peakTime(i-1)+(params.minRefract/LP.acquireRes);    % last spike + refractory
             if sp.peakTime(i)-1 > temp_t                                    % consider 0.5 ms refractory
@@ -59,15 +59,15 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
                         maxdVdtTime(i))<(0.05*maxdVdt(i)), 1, 'last');      % store threshold crossing time
                     thresholdTime(i) = thresholdTime(i)+sp.peakTime(i-1);   % adjust threshold time by peak time
                     threshold(i) = LP.V{1,k}(thresholdTime(i));             % store threshold voltage
-                    hold on
-                    plot(LP.V{1,k})
-                    plot(dVdt)
-                    scatter(maxdVdtTime(i),maxdVdt(i))
-                    scatter(thresholdTime(i),threshold(i))
-                    scatter(thresholdTime(i),dVdt(thresholdTime(i)))
-                    xlim([thresholdTime(i)-10 sp.peakTime(i)+10])
-                    pause(1)
-                    close
+%                     hold on
+%                     plot(LP.V{1,k})
+%                     plot(dVdt)
+%                     scatter(maxdVdtTime(i),maxdVdt(i))
+%                     scatter(thresholdTime(i),threshold(i))
+%                     scatter(thresholdTime(i),dVdt(thresholdTime(i)))
+%                     xlim([thresholdTime(i)-10 sp.peakTime(i)+10])
+%                     pause(1)
+%                     close
                 else                                                        % if there is no clear indication of threshold
                     if ~isempty(find(dVdt(maxdVdtTime(i)-...
                             (1.5/LP.acquireRes):maxdVdtTime(i))<0.5, 1,'last'))
@@ -75,27 +75,27 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
                             (1.5/LP.acquireRes):maxdVdtTime(i))<0.5, 1,'last'); % threshold where dV/dt < 0.5mV/ms
                         thresholdTime(i) = thresholdTime(i)+maxdVdtTime(i);     % adjust threshold time by max dVdt time
                         threshold(i) = LP.V{1,k}(thresholdTime(i));             % record threshold
-                        hold on
-                        plot(LP.V{1,k})
-                        plot(dVdt)
-                        scatter(maxdVdtTime(i),maxdVdt(i))
-                        scatter(thresholdTime(i),threshold(i))
-                        scatter(sp.peakTime(i),-10)
-                        scatter(sp.peakTime(i-1),-10)
-                        xlim([maxdVdtTime(i)-10 sp.peakTime(i)+10])
-                        close
+%                         hold on
+%                         plot(LP.V{1,k})
+%                         plot(dVdt)
+%                         scatter(maxdVdtTime(i),maxdVdt(i))
+%                         scatter(thresholdTime(i),threshold(i))
+%                         scatter(sp.peakTime(i),-10)
+%                         scatter(sp.peakTime(i-1),-10)
+%                         xlim([maxdVdtTime(i)-10 sp.peakTime(i)+10])
+%                         close
                     else
                         thresholdTime(i) = 0;                               % set to zero to ID later
                         threshold(i) = 0;
-                        hold on
-                        plot(LP.V{1,k})
-                        plot(dVdt)
-                        scatter(sp.peakTime(i),-10)
-                        scatter(sp.peakTime(i-1),-10)
-                        xlabel('time-steps')
-                        xlim([sp.peakTime(i-1)-10 sp.peakTime(i)+10])
-                        pause(1)
-                        close
+%                         hold on
+%                         plot(LP.V{1,k})
+%                         plot(dVdt)
+%                         scatter(sp.peakTime(i),-10)
+%                         scatter(sp.peakTime(i-1),-10)
+%                         xlabel('time-steps')
+%                         xlim([sp.peakTime(i-1)-10 sp.peakTime(i)+10])
+%                         pause(1)
+%                         close
                     end
                 end
             else                                                            % record data for spikes removed due to short intervals
@@ -103,15 +103,15 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
                 maxdVdtTime(i) = NaN;
                 thresholdTime(i) = NaN;
                 threshold(i) = NaN;
-                hold on
-                plot(LP.V{1,k})
-                plot(dVdt)
-                scatter(sp.peakTime(i),-10)
-                scatter(sp.peakTime(i-1),-10)
-                xlabel('time-steps')
-                xlim([sp.peakTime(i-1)-10 sp.peakTime(i)+10])
-                pause(1)
-                close
+%                 hold on
+%                 plot(LP.V{1,k})
+%                 plot(dVdt)
+%                 scatter(sp.peakTime(i),-10)
+%                 scatter(sp.peakTime(i-1),-10)
+%                 xlabel('time-steps')
+%                 xlim([sp.peakTime(i-1)-10 sp.peakTime(i)+10])
+%                 pause(1)
+%                 close
             end
         end
     end

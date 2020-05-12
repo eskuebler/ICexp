@@ -16,9 +16,13 @@ for i = 1:length(LP.putSpTimes2)
         elseif i > 1
             [maxdVdt(i), maxdVdtTime(i)] = max(sp.dVdt(sp.peakTime(i-1):sp.peakTime(i)-1)); % max change in voltage
             maxdVdtTime(i) = maxdVdtTime(i) + sp.peakTime(i-1);
-            thresholdRefTime(i) = find(sp.dVdt(sp.peakTime(i-1):maxdVdtTime(i))<(0.05*AVGmaxdVdt), 1, 'last');
-            thresholdRefTime(i) = thresholdRefTime(i)+sp.peakTime(i-1);
-            thresholdRef(i) = LP.V{1,k}(thresholdRefTime(i));
+            if ~isempty(find(sp.dVdt(sp.peakTime(i-1):maxdVdtTime(i))<(0.05*AVGmaxdVdt), 1, 'last'))
+                thresholdRefTime(i) = find(sp.dVdt(sp.peakTime(i-1):maxdVdtTime(i))<(0.05*AVGmaxdVdt), 1, 'last');
+                thresholdRefTime(i) = thresholdRefTime(i)+sp.peakTime(i-1);
+                thresholdRef(i) = LP.V{1,k}(thresholdRefTime(i));
+            else
+                'yo'
+            end
         end
     end
 end
