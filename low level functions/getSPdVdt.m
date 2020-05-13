@@ -1,4 +1,4 @@
-function LP = getSPdVdt(LP,k,thresholdDVDT)
+function LP = getSPdVdt(LP,k,thresholdDVDT,cellID)
 
 %{
 getSPdVdt
@@ -18,11 +18,13 @@ elseif round(double(1000/LP.acquireRes)) == 2e5                      % remove pa
 end
 x = single(x);
 
+
 % smooth w filter?
 % output = smoothdata(dVdt,'gaussian',15,'SamplePoints',1:length(dVdt));
 
 dVdt = diff(x)/(1000/5e4);              % dV/dt at 50 kHz
 
+figure('Position',[50 50 600 400]); set(gcf,'color','w');
 subplot(2,1,1)
 plot(x,'k')
 xlabel('time')
@@ -38,8 +40,9 @@ ylabel('dV/dt (mV/ms)')
 axis tight
 ylim([0 30])
 box off
-pause(1)
+export_fig(['D:\genpath\',cellID,' ',int2str(k),' no spikes'],'-pdf','-r100');
 close
+
 % tempSP = find(dVdt > (20/LP.acquireRes));
 % c = 1;
 % for j = 1:length(tempSP)-1

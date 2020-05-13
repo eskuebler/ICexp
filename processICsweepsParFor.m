@@ -5,7 +5,7 @@ processICsweepsParFor
 %}
 folder = 'D:\genpath\genpath\'; cellList = dir([folder,'*.mat']);           % list of cell data files
 tic;                                                                        % initialize clock
-for n = 1:length(cellList)                                               % for all cells in directory
+parfor n = 1:length(cellList)                                               % for all cells in directory
     params = loadParams;                                                    % load parameters to workspace
     cellID = cellList(n).name(1:length(cellList(n).name)-4);                % cell ID (used for saving data)
     disp(cellID)                                                            % display ID number

@@ -5,13 +5,9 @@ processSuprathresholdLongPulsePF
 - analysis of suprathreshold sweeps
 %}
 
-% spikes based on 0 mV threshold
 LP.putSpTimes = LP.stimOn(1,k)+...
-    find(LP.V{1,k}(LP.stimOn(1,k):LP.stimOff(1,k))>=params.thresholdV)-1;   % 0 mV threshold
-
-% spikes based on dV/dt 20mV/ms threshold
-LP = getSPdVdt(LP,k,params.thresholdDVDT);
-
+    find(LP.V{1,k}(LP.stimOn(1,k):LP.stimOff(1,k))>=params.thresholdV)-1;   % voltage threshold
+LP = getSPdVdt(LP,k,params.thresholdDVDT,cellID);                           % derivative threshold
 if ~isempty(LP.putSpTimes)                                                  % if no spikes
     [int4Peak,LP.putSpTimes2] = int4APs(LP.putSpTimes);                     % interval for peak voltage
     if ~isempty(LP.putSpTimes2)                                             % if no spikes
@@ -28,24 +24,19 @@ if ~isempty(LP.putSpTimes)                                                  % if
                     % assessPersistence
                     wf = getWaveforms(LP,params,sp,k);                      % get spike waveforms 
                     supraStats = storeSPparams(LP,sp,wf,k);                 % store spike parameters
-                    plotSuprathreshold(LP,sp,k,cellID)
-                else
+                    plotSuprathreshold(LP,sp,k,cellID)                      % plot voltage and spike parameters
+                else                                                        % if there are no spikes
                     supraStats = outputNaNs(LP,k);                          % output structure of NaNs
-                    plotNoSP(LP,k,cellID)                                   % plot raw voltage trace
                 end
-            else
+            else                                                            % if there are no spikes
                 supraStats = outputNaNs(LP,k);                              % output structure of NaNs
-                plotNoSP(LP,k,cellID)                                       % plot raw voltage trace
             end
-        else
+        else                                                                % if there are no spikes
             supraStats = outputNaNs(LP,k);                                  % output structure of NaNs
-            plotNoSP(LP,k,cellID)                                           % plot raw voltage trace
         end
-    else
+    else                                                                    % if there are no spikes
         supraStats = outputNaNs(LP,k);                                      % output structure of NaNs
-        plotNoSP(LP,k,cellID)                                               % plot raw voltage trace
     end
-else
+else                                                                        % if there are no spikes
     supraStats = outputNaNs(LP,k);                                          % output structure of NaNs
-    plotNoSP(LP,k,cellID)                                                   % plot raw voltage trace
 end
