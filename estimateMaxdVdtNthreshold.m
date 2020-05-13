@@ -16,6 +16,7 @@ dVdt = smoothdata(dVdt,'gaussian',15,'SamplePoints',1:length(dVdt));      % filt
 
 threshold = zeros(1,length(LP.putSpTimes2)); 
 thresholdTime = zeros(1,length(LP.putSpTimes2));
+
 for i = 1:length(LP.putSpTimes2)                                            % for each putative spike
     % find max dV/dt
     if length(LP.putSpTimes2) == 1                                          % if there is only one spike
