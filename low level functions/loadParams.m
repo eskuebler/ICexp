@@ -21,6 +21,7 @@ p.sampleRT = 5e4;                              % sample rate we want
 p.sampleRTdt = 1000/p.sampleRT;                % sample rate we want
 
 % spike-wise quality control parameters
+p.pcentMaxdVdt = 0.05;                          % threshold = < % of dVdt
 p.minRefract = 0.5;                             % min refractory
 p.mindVdt = 5;                                 % minimum amount of dV/dt
 p.minDiffThreshold2Peak = 20;                  % max diff in V bw threshold and peak

@@ -22,7 +22,7 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
     if length(LP.putSpTimes2) == 1                                          % if there is only one spike
     	[maxdVdt(i), maxdVdtTime(i)] = max(dVdt(1:sp.peakTime(i)));         % max change in voltage
         thresholdTime(i) = find(dVdt(1:maxdVdtTime(i)) < ...
-            (0.05*maxdVdt(i)), 1, 'last');                                  % 5% of max dV/dt
+            (params.pcentMaxdVdt*maxdVdt(i)), 1, 'last');                   % 5% of max dV/dt
         threshold(i) = LP.V{1,k}(thresholdTime(i));                         % store threshold for spike
 %         hold on
 %         plot(LP.V{1,k})
@@ -37,7 +37,7 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
         if i == 1                                                           % if this is first spike
             [maxdVdt(i), maxdVdtTime(i)] = max(dVdt(1:sp.peakTime(i)-1));   % max change in voltage
             thresholdTime(i) = find(dVdt(1:maxdVdtTime(i)) < ...
-                (0.05*maxdVdt(i)), 1, 'last');                              % 5% of max dV/dt
+                (params.pcentMaxdVdt*maxdVdt(i)), 1, 'last');               % 5% of max dV/dt
             threshold(i) = LP.V{1,k}(thresholdTime(i));                     % store threshold for spike
 %             hold on
 %             plot(LP.V{1,k})
@@ -55,9 +55,9 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
                     sp.peakTime(i)-1));                                     % max change in voltage
                 maxdVdtTime(i) = maxdVdtTime(i) + temp_t - 1;               % adjust max time by peak time
                 if ~isempty(find(dVdt(sp.peakTime(i-1):maxdVdtTime(i)) < ...
-                        (0.05*maxdVdt(i)), 1, 'last'))                      % if there is a clear indication of threshold
+                        (params.pcentMaxdVdt*maxdVdt(i)), 1, 'last'))       % if there is a clear indication of threshold
                     thresholdTime(i) = find(dVdt(sp.peakTime(i-1): ...
-                        maxdVdtTime(i))<(0.05*maxdVdt(i)), 1, 'last');      % store threshold crossing time
+                        maxdVdtTime(i))<(params.pcentMaxdVdt*maxdVdt(i)), 1, 'last');      % store threshold crossing time
                     thresholdTime(i) = thresholdTime(i)+sp.peakTime(i-1);   % adjust threshold time by peak time
                     threshold(i) = LP.V{1,k}(thresholdTime(i));             % store threshold voltage
 %                     hold on

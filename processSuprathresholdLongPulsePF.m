@@ -18,7 +18,7 @@ if ~isempty(LP.putSpTimes)                                                  % if
         [sp] = estimatePeak(LP,int4Peak,k);                                 % estimate of peak
         [sp,LP] = estimateMaxdVdtNthreshold(LP,sp,k,params,cellID);         % dV/dt & initial threshold
         if ~isempty(sp.peak)                                                % if no spikes
-            [sp] = refineThreshold(LP,sp,k);                                % refine threshold estimate
+            [sp] = refineThreshold(LP,sp,k,params);                         % refine threshold estimate
             [sp,LP] = estimateTrough(LP,sp,k,params);                       % estimate trough
             if ~isempty(sp.peak)                                            % if no spikes
                 [sp,LP] = estimateSpParams(LP,sp,k,params);                 % estimate spike parameters
