@@ -5,14 +5,14 @@ function [sp,LP] = estimateTrough(LP,sp,k,params)
 % need to add fast and slow trough distinctions
 
 win = 15/LP.acquireRes;
-if length(LP.putSpTimes2) > 1
-	for i = 1:length(LP.putSpTimes2)-1
+if length(sp.peakTime) > 1
+	for i = 1:length(sp.peakTime)-1
 		[trough(i),temp] = min(LP.V{1,k}(sp.peakTime(i):sp.peakTime(i+1)));
 		troughTime(i) = sp.peakTime(i)+temp(1)-1;
     end
     [trough(i+1),temp] = min(LP.V{1,k}(sp.peakTime(i+1):sp.peakTime(i+1)+win));
     troughTime(i+1) = sp.peakTime(i+1)+temp(1)-1;
-elseif length(LP.putSpTimes2) == 1
+elseif length(sp.peakTime) == 1
     [trough(1),temp] = min(LP.V{1,k}(sp.peakTime(1):sp.peakTime(1)+win));
     troughTime(1) = sp.peakTime(1)+temp(1)-1;
 end
