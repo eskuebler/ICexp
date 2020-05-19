@@ -5,10 +5,10 @@ processBwSweepsQC
 ind = find(sweepBinary(n,:)==1);                                            % index of sweeps that passed other QC
 vec = qc_V_vec(n,ind);                                                      % resting voltages for QC'd sweeps
 if length(vec) > 1                                                          % if one sweep don't analyze
-    diffMinMaxV(n,1) = round(abs(min(vec)-max(vec)),2);                              % diff b/w min & max
+    diffMinMaxV(n,1) = round(abs(min(vec)-max(vec)),2);                     % diff b/w min & max
     if diffMinMaxV(n,1) < minNmaxThres                                      % if diff b/w min & max > thres
-        stdOrigV(n,1) = round(std(vec),2);                                           % s.d. original voltages
-        meanOrigV(n,1) = round(mean(vec),2);                                         % mean original voltages
+        stdOrigV(n,1) = round(std(vec),2);                                  % s.d. original voltages
+        meanOrigV(n,1) = round(mean(vec),2);                                % mean original voltages
         if stdOrigV(n,1) > origStdThresMax                                  % if s.d. > max threshold
             removedListStd{rmvdStdCount,1} = cellID;                        % add ID to s.d. remove cell list
             rmvdStdCount = rmvdStdCount + 1;

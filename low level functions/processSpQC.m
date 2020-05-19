@@ -5,7 +5,22 @@ processSpQC
 if isfield(a.LP.stats{k,1},'qcRemovals')
     
     vec = []; vectag = [];
+    LP.qcRemovals.QCmatT2P
+    LP.qcRemovals.QCmatT2PRe
+    LP.qcRemovals.QCmatTrough
+    LP.qcRemovals.percentRheobaseHeight
     
+    figure('Position',[50 50 200 250]); set(gcf,'color','w');
+    imagesc(LP.qcRemovals.QCmatT2P)
+    colormap('gray')
+    colorbar
+    xticks(1:6)
+    xticklabels({'interval','null dV/dt','dV/dt<5mV/ms','threshold>-20mV','t2p<20mV','t2pT>2ms'})
+    xtickangle(45)
+    ylabel('spike #')
+    export_fig(['D:\genpath\',cellID,' ',int2str(k),' suprathreshold spike QC'],'-pdf','-r100');
+    close
+
     % max threshold
     if isfield(a.LP.stats{k,1}.qcRemovals,'maxThreshold') & ...
             ~isnan(a.LP.stats{k,1}.qcRemovals.maxThreshold)
@@ -74,6 +89,10 @@ if isfield(a.LP.stats{k,1},'qcRemovals')
                 spid = spid(I);
                 spqcmatnbinary(k,1:length(sp)) = sp;
                 spqcmatnbinaryid(k,1:length(spid)) = spid;
+                if length(unique(vectag))>1
+                    'yo'
+                end
+                spqcvectag(k,1:length(vectag)) = vectag;
                 input_current_spqc(k,1) = round(double(a.LP.sweepAmps(k,1)));
                 clear sp spid B I
             end
@@ -90,6 +109,7 @@ if isfield(a.LP.stats{k,1},'qcRemovals')
             input_current_spqc(k,1) = round(double(a.LP.sweepAmps(k,1)));
             spqcmatnbinary(k,length(sp)+1:end) = NaN;
             spqcmatnbinaryid(k,length(spid)+1:end) = NaN;
+            spqcvectag(k,length(vectag)+1:end) = NaN;
             clear sp spid B I
         else
 %             input_current_spqc(k,1) = round(double(a.LP.sweepAmps(k,1)));

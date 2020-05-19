@@ -21,6 +21,9 @@ end
 QCpeakNtrough
 %}
 
+LP.qcRemovals.QCmatTrough = [(abs(trough-sp.peak))', ...
+    (trough>params.minTrough)'];
+
 diffpeak2trough = abs(trough-sp.peak);
 idx = diffpeak2trough < params.minDiffPeak2Trough;
 LP.qcRemovals.diffpeak2trough = LP.putSpTimes2(idx);

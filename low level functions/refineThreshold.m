@@ -99,6 +99,8 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
     end
 end
 
+LP.qcRemovals.QCmatT2PRe = [(isnan(thresholdRef))',(thresholdRef==0)'];
+
 idx0 = find(isnan(thresholdRef));                                                % number of times interval rule is broken
 LP.qcRemovals.minIntervalre = LP.putSpTimes2(idx0);                           % record event times
 LP.putSpTimes2(idx0) = [];

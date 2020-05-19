@@ -14,9 +14,9 @@ clear; close all; clc;
 minNmaxThres = 10;
 origStdThresMax = 3;
 origStdThresMin = 0.7;
-savefilename = 'cell type details (2020 05 19)';
-savefilenameInd = 'cell type details (2020 05 19) sp qc';
-savefilenameIndBin = 'cell type details (2020 05 19) sp qc binary';
+savefilename = 'cell type details (2020 05 18)';
+savefilenameInd = 'cell type details (2020 05 18) sp qc';
+savefilenameIndBin = 'cell type details (2020 05 18) sp qc binary';
 
 % load data
 load('dendrite_layer.mat')
@@ -169,7 +169,7 @@ for n = 1:length(cellList)
                 sweepBinaryOrig(1,k) = 0;
             end
             processSpQC
-            % remove sweeps that exceed good/bad spike ratio  0.3
+            % remove sweeps that exceed good/bad spike ratio
         end
         qc_logic_mat(n,1:6) = qc_logic;
         processBwSweepsQC                                                   % across sweep QC
@@ -178,8 +178,12 @@ for n = 1:length(cellList)
         qc_class_mat(n,:) = 0;
     end
     
-    % save spike-wise QC
     if exist('input_current_spqc','var')
+        
+        % save QC for cell
+        % good spikes vs bad spikes
+        % ratio 0.3
+        
         T = table(input_current_spqc,spqcmatnbinary);
         writetable(T,[savefilenameInd,' ',cellID,'.xlsx'],'Sheet',...
             'Sheet1','WriteRowNames',true)
