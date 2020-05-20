@@ -1,4 +1,4 @@
-function plotSuprathreshold(LP,sp,k,cellID,folder)
+function plotQCdDepolarizing(LP,sp,k,cellID,folder)
 
 %{
 plotSuprathreshold

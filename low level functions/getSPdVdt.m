@@ -1,4 +1,4 @@
-function LP = getSPdVdt(LP,k,thresholdDVDT,cellID)
+function LP = getSPdVdt(LP,k,thresholdDVDT,cellID,folder)
 
 %{
 getSPdVdt
@@ -40,7 +40,7 @@ ylabel('dV/dt (mV/ms)')
 axis tight
 ylim([0 30])
 box off
-export_fig(['D:\genpath\',cellID,' ',int2str(k),' no spikes'],'-pdf','-r100');
+export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' no spikes'],'-pdf','-r100');
 close
 
 % tempSP = find(dVdt > (20/LP.acquireRes));

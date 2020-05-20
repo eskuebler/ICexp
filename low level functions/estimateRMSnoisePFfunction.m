@@ -1,4 +1,4 @@
-function [qc] = estimateRMSnoisePFfunction(LP,k,params,cellID)
+function [qc] = estimateRMSnoisePFfunction(LP,k,params,cellID,folder)
 
 %{
 estimateRMSnoisePFfunction
@@ -50,5 +50,5 @@ ylabel('voltage (mV)')
 axis tight
 ylim([-100 -30])
 legend({'pre-stim','post-stim'})
-export_fig(['D:\genpath\',cellID,' ',int2str(k),' RMS noise vectors'],'-pdf','-r100');
+export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' RMS noise vectors'],'-pdf','-r100');
 close

@@ -1,3 +1,3 @@
-function saveFile(a,temp)
+function saveFile(a,temp,folder)
 
-save(['D:\genpath\',temp],'a');       % save .mat files
+save([folder(1:length(folder)-8),temp],'a');       % save .mat files

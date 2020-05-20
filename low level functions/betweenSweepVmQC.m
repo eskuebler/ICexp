@@ -1,4 +1,4 @@
-function [LP] = betweenSweepVmQC(LP,cellID)
+function [LP] = betweenSweepVmQC(LP,cellID,folder)
 %{
 betweenSweepVmQC
 %}
@@ -19,5 +19,5 @@ axis tight
 ylim([-80 -40])
 
 % save figure
-export_fig(['D:\genpath\',cellID,' rmp'],'-pdf','-r100');
+export_fig([folder(1:length(folder)-8),cellID,' rmp'],'-pdf','-r100');
 close

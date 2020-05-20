@@ -1,4 +1,4 @@
-function b = summarizeSubthreshold(LP,cellID)
+function b = summarizeSubthreshold(LP,cellID,folder)
 
 figure('Position',[50 50 900 250]); set(gcf,'color','w');
 
@@ -104,5 +104,5 @@ else
     b.tauSS = NaN;
 end
 
-export_fig(['D:\genpath\',cellID,' subthreshold summary'],'-pdf','-r100');
+export_fig([folder(1:length(folder)-8),cellID,' subthreshold summary'],'-pdf','-r100');
 close
