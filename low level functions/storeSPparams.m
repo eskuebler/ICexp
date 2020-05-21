@@ -4,11 +4,20 @@ function supraStats = storeSPparams(LP,sp,wf,k)
 storeSPparams
 %}
 
+supraStats.qcRemovals.QCmatT2P = LP.qcRemovals.QCmatT2P;
+supraStats.qcRemovals.minInterval = LP.qcRemovals.minInterval;
+supraStats.qcRemovals.dVdt0 = LP.qcRemovals.dVdt0;
+supraStats.qcRemovals.mindVdt = LP.qcRemovals.mindVdt;
 supraStats.qcRemovals.maxThreshold = LP.qcRemovals.maxThreshold;
 supraStats.qcRemovals.diffthreshold2peak = LP.qcRemovals.diffthreshold2peak;
 supraStats.qcRemovals.diffthreshold2peakT = LP.qcRemovals.diffthreshold2peakT;
+supraStats.qcRemovals.QCmatT2PRe = LP.qcRemovals.QCmatT2PRe;
+supraStats.qcRemovals.minIntervalRe = LP.qcRemovals.minIntervalre;
+supraStats.qcRemovals.dVdt0Re = LP.qcRemovals.dVdt0re;
+supraStats.qcRemovals.QCmatTrough = LP.qcRemovals.QCmatTrough;
 supraStats.qcRemovals.diffpeak2trough = LP.qcRemovals.diffpeak2trough;
 supraStats.qcRemovals.minTrough = LP.qcRemovals.minTrough;
+supraStats.qcRemovals.diffpeak2trough = LP.qcRemovals.diffpeak2trough;
 supraStats.qcRemovals.percentRheobaseHeight = LP.qcRemovals.percentRheobaseHeight;
 
 supraStats.spTimes = LP.putSpTimes2;

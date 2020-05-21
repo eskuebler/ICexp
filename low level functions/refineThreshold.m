@@ -1,4 +1,4 @@
-function [sp] = refineThreshold(LP,sp,k,params)
+function [sp,LP] = refineThreshold(LP,sp,k,params)
 
 % refined threshold (based on average max dV/dt)
 

@@ -5,10 +5,10 @@ processSpQC
 if isfield(a.LP.stats{k,1},'qcRemovals')
     
     vec = []; vectag = [];
-    LP.qcRemovals.QCmatT2P
-    LP.qcRemovals.QCmatT2PRe
-    LP.qcRemovals.QCmatTrough
-    LP.qcRemovals.percentRheobaseHeight
+    a.LP.stats{k,1}.qcRemovals.QCmatT2P
+    a.LP.stats{k,1}.qcRemovals.QCmatT2PRe
+    a.LP.stats{k,1}.qcRemovals.QCmatTrough
+    a.LP.stats{k,1}.qcRemovals.percentRheobaseHeight
     
     figure('Position',[50 50 200 250]); set(gcf,'color','w');
     imagesc(LP.qcRemovals.QCmatT2P)

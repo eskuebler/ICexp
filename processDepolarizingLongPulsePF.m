@@ -2,40 +2,36 @@ function supraStats = processDepolarizingLongPulsePF(LP,params,k, ...
     cellID,folder)
 %{
 processSuprathresholdLongPulsePF
-- analysis of suprathreshold sweeps
+- analysis of depolarizing sweeps
 %}
 LP.putSpTimes = LP.stimOn(1,k)+...
     find(LP.V{1,k}(LP.stimOn(1,k):LP.stimOff(1,k))>=params.thresholdV)-1;   % voltage threshold
 LP = getSPdVdt(LP,k,params.thresholdDVDT,cellID,folder);                    % derivative threshold
 if ~isempty(LP.putSpTimes)                                                  % if no spikes
     [int4Peak,LP.putSpTimes2] = int4APs(LP.putSpTimes);                     % interval for peak voltage
-%     if ~isempty(LP.putSpTimes2)                                             % if no spikes (this check may be useless)
-        [sp] = estimatePeak(LP,int4Peak,k);                                 % estimate of peak
-        [sp,LP] = estimateMaxdVdtNthreshold(LP,sp,k,params,cellID,folder);  % dV/dt & initial threshold
+    [sp] = estimatePeak(LP,int4Peak,k);                                     % estimate of peak
+    [sp,LP] = estimateMaxdVdtNthreshold(LP,sp,k,params,cellID,folder);      % dV/dt & initial threshold
+    if ~isempty(sp.peak)                                                    % if no spikes
+        [sp,LP] = refineThreshold(LP,sp,k,params);                          % refine threshold estimate
+        [sp,LP] = estimateTrough(LP,sp,k,params);                           % estimate trough
         if ~isempty(sp.peak)                                                % if no spikes
-            [sp] = refineThreshold(LP,sp,k,params);                         % refine threshold estimate
-            [sp,LP] = estimateTrough(LP,sp,k,params);                       % estimate trough
+            [sp,LP] = estimateSpParams(LP,sp,k,params);                     % estimate spike parameters
             if ~isempty(sp.peak)                                            % if no spikes
-                [sp,LP] = estimateSpParams(LP,sp,k,params);                 % estimate spike parameters
-                if ~isempty(sp.peak)                                        % if no spikes
-                    [sp] = estimateAPTrainParams(LP,sp,k);                  % estimate spike train parameters
-                    % estimate plateau potential
-                    % assessPersistence (spikes post-stim)
-                    wf = getWaveforms(LP,params,sp,k);                      % get spike waveforms 
-                    supraStats = storeSPparams(LP,sp,wf,k);                 % store spike parameters
-                    plotQCdDepolarizing(LP,sp,k,cellID,folder)              % plot voltage and spike parameters
-                else                                                        % if there are no spikes
-                    supraStats = outputNaNs(LP,k);                          % output structure of NaNs
-                end
+                [sp] = estimateAPTrainParams(LP,sp,k);                      % estimate spike train parameters
+                % estimate plateau potential
+                % assessPersistence (spikes post-stim)
+                wf = getWaveforms(LP,params,sp,k);                          % get spike waveforms 
+                supraStats = storeSPparams(LP,sp,wf,k);                     % store spike parameters
+                plotQCdDepolarizing(LP,sp,k,cellID,folder)                  % plot voltage and spike parameters
             else                                                            % if there are no spikes
                 supraStats = outputNaNs(LP,k);                              % output structure of NaNs
             end
         else                                                                % if there are no spikes
             supraStats = outputNaNs(LP,k);                                  % output structure of NaNs
         end
-%     else                                                                    % if there are no spikes
-%         supraStats = outputNaNs(LP,k);                                      % output structure of NaNs
-%     end
+    else                                                                    % if there are no spikes
+        supraStats = outputNaNs(LP,k);                                      % output structure of NaNs
+    end
 else                                                                        % if there are no spikes
     supraStats = outputNaNs(LP,k);                                          % output structure of NaNs
 end

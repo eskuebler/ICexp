@@ -2,34 +2,31 @@
 summaryICanalysis
 %}
 
-clear; close all; clc;
+clear; close all; clc;                                                      % prepare Matlab workspace
 
-% QC waveform (count bad spikes, register by QC)
-    % first normal then morphed
-    % if bad spikes come after good spike re want to
-    % remove 
-
+% list of cells
+mainFolder = 'D:\my\';                                                      % main folder for data (EDIT HERE)
+cellList = dir([mainFolder,'genpath\*.mat']);                                 % cell list
     
 % free parameters (across sweep QC)
-minNmaxThres = 10;
-origStdThresMax = 3;
-origStdThresMin = 0.7;
-savefilename = 'cell type details (2020 05 19)';
-savefilenameInd = 'cell type details (2020 05 19) sp qc';
-savefilenameIndBin = 'cell type details (2020 05 19) sp qc binary';
+minNmaxThres = 10;                                                          % threshold for difference b/w min and max voltage
+origStdThresMax = 3;                                                        % above this threshold we remove sweeps > 1.75 S.D.s
+origStdThresMin = 0.7;                                                      % below this threshold cells are not QC'd sweep-wise any further
+
+% summary file names
+savefilename = 'cell type details (2020 05 19)';                            % main data file name
+savefilenameInd = 'cell type details (2020 05 19) sp qc';                   % single cells file name (cell ID added below in loop)
+% savefilenameIndBin = 'cell type details (2020 05 19) sp qc binary';         
 
 % load data
-load('dendrite_layer.mat')
-layerID = ID; dendrite_typeMJ = dendrite_type; clear ID dendrite_type
-load('pyramidal cell IDs.mat')
-pyrID = ID; clear ID
+load('dendrite_layer.mat')                                                  % load Michelle's NHP data
+layerID = ID; dendrite_typeMJ = dendrite_type; clear ID dendrite_type       % adjust variable names for overlap
+load('pyramidal cell IDs.mat')                                              % load Michelle's pyramidal cells
+pyrID = ID; clear ID                                                        % adjust variable names for overlap
 load('cell_types_specimen_details.mat','donor__species','specimen__id',...
     'line_name','tag__dendrite_type','ef__ri','ef__tau',...
     'ef__threshold_i_long_square','cell_reporter_status',...
-    'structure__acronym','structure__layer');
-
-% list of cells
-cellList = dir('D:\genpath\*.mat');
+    'structure__acronym','structure__layer');                               % load Allen Institute parameters
 
 % initialize
 input_current_s = zeros(length(cellList),25);
@@ -38,19 +35,19 @@ removedListStd = []; rmvdStdCount = 1;
 removedListMinMax = []; rmvdMMCount = 1;
 spqcmat = zeros(length(cellList),60);
 
-for n = 1:length(cellList)
-    clc; disp(n)
+for n = 1:length(cellList)                                                  % for each cells
+    clc; disp(n)                                                            % display n value
     sweepIDcount = 1;
     
     if length(cellList(n).name) == 17
-        cellID = cellList(n).name(1:length(cellList(n).name)-4);
+        cellID = cellList(n).name(1:length(cellList(n).name)-4);            % JMT lab ID
     else
-        cellID = cellList(n).name(10:length(cellList(n).name)-4);
+        cellID = cellList(n).name(10:length(cellList(n).name)-4);           % Allen ID
     end
 
     
     % pull data for AIBS cell
-    if length(cellID) == 9
+    if length(cellID) == 9                                                  % if an Allen cell
         % match species ID # to get Allen parameters
         k  = find(specimen__id==str2num(cellID));
 
@@ -74,7 +71,7 @@ for n = 1:length(cellList)
         temperature(n,1) = 0;
         
     % pull data for PCTD cell
-    else
+    else                                                                    % if a JMT cell
         ID(n,:) = cellID;
         specimen(n,:) = categorical(cellstr('NHP'));
         struct(n,:) = categorical(cellstr('PFC'));
@@ -104,62 +101,72 @@ for n = 1:length(cellList)
     end
 
     % load our analysis
-    load(['D:\genpath\',cellList(n).name]);
+    load([mainFolder,'genpath\',cellList(n).name]);                         % load analysis file for cell
     
     % qc stuff
-    qc_logic = zeros(1,6);
+    qc_logic = zeros(1,6);                                                  % initialize QC matrix
 
-    if a.LP.fullStruct == 1
-        qcID{n,1} = cellID;
-        qc_V_vec(n,1:length(a.LP.rmp(1,:))) = round(a.LP.rmp(1,:),2);
+    if a.LP.fullStruct == 1                                                 % if full data structure is available
+        qcID{n,1} = cellID;                                                 % cell ID
+        qc_V_vec(n,1:length(a.LP.rmp(1,:))) = round(a.LP.rmp(1,:),2);       % resting membrane potential
         qc_V_vecDelta(n,1:length(a.LP.rmp(1,:))) = ...
-            round(a.LP.rmp(1,1) - a.LP.rmp(1,:),2);
-        spqcmatn = zeros(length(a.LP.sweepAmps),6);
-        spqcmatnbinary = nan(20,300); spqcmatnbinaryid = nan(20,300);
-        spqcvectag = nan(20,300);
-        input_current_spqc = zeros(20,1);
-        for k = 1:length(a.LP.sweepAmps)
-            % quality control parameters
-            qc_restVpre(n,k) = round(a.LP.stats{k,1}.qc.restVPre,2);
-            qc_restVpost(n,k) = round(a.LP.stats{k,1}.qc.restVPost,2);
-            qc_restVdiffpreNpost(n,k) = round(a.LP.stats{k,1}.qc.diffV_b_e,2);
-            qc_rmse_pre_lt(n,k) = round(a.LP.stats{k,1}.qc.rmse_pre,2);
-            qc_rmse_post_lt(n,k) = round(a.LP.stats{k,1}.qc.rmse_post,2);
-            qc_rmse_pre_st(n,k) = round(a.LP.stats{k,1}.qc.rmse_pre_st,2);
-            qc_rmse_post_st(n,k) = round(a.LP.stats{k,1}.qc.rmse_post_st,2);
-            qc_logic = qc_logic+a.LP.stats{k,1}.qc.logicVec;
-            vec = find(a.LP.stats{k,1}.qc.logicVec==1);
-            if length(vec) == 1
+            round(a.LP.rmp(1,1) - a.LP.rmp(1,:),2);                         % diff RMP pre and post stimulus
+        spqcmatn = zeros(length(a.LP.sweepAmps),6);                         % initialize count of QC removals matrix (each column is a criteria)
+        spqcmatnbinary = nan(20,300); spqcmatnbinaryid = nan(20,300);       % initialize spike-wise QC matrix
+        spqcvectag = nan(20,300);                                           % initialize QC tag storage
+        input_current_spqc = zeros(20,1);                                   % initialize input current storage
+        for k = 1:length(a.LP.sweepAmps)                                    % for each sweep
+            
+            % sweep-wise quality control parameters
+            qc_restVpre(n,k) = round(a.LP.stats{k,1}.qc.restVPre,2);        % RMP pre stimulus
+            qc_restVpost(n,k) = round(a.LP.stats{k,1}.qc.restVPost,2);      % RMP post stimulus
+            qc_restVdiffpreNpost(n,k) = round( ...
+                a.LP.stats{k,1}.qc.diffV_b_e,2);                            % diff RMP pre and post stimulus
+            qc_rmse_pre_lt(n,k) = round(a.LP.stats{k,1}.qc.rmse_pre,2);     % long term RMS pre stimulus
+            qc_rmse_post_lt(n,k) = round(a.LP.stats{k,1}.qc.rmse_post,2);   % lt RMS post stimulus
+            qc_rmse_pre_st(n,k) = round(a.LP.stats{k,1}.qc.rmse_pre_st,2);  % st RMS pre stimulus
+            qc_rmse_post_st(n,k) = round( ...
+                a.LP.stats{k,1}.qc.rmse_post_st,2);                         % st RMS post stimulus
+            qc_logic = qc_logic+a.LP.stats{k,1}.qc.logicVec;                % QC logic vector (each column is a criteria)
+            
+            % spike-wise QC processing            
+            processSpQC                                                     % process spike-wise QC
+            % remove sweeps that exceed good/bad spike ratio  0.3
+            % add to QC vec
+                        
+            % assess comorbidity of sweep-wise QC
+            vec = find(a.LP.stats{k,1}.qc.logicVec==1);                     % read out of QC criteria for single sweep
+            if length(vec) == 1                                             % if there is only one criteria
                 qc_class_mat(n,k) = vec;
-            elseif length(vec) == 2
+            elseif length(vec) == 2                                         % if two criteria failed
                 result = strcat(num2str(vec(1)),num2str(vec(2)));
                 result = str2num(result);
                 qc_class_mat(n,k) = result;
-            elseif length(vec) == 3
+            elseif length(vec) == 3                                         % if three criteria failed
                 result = strcat(num2str(vec(1)),num2str(vec(2)),...
                     num2str(vec(3)));
                 result = str2num(result);
                 qc_class_mat(n,k) = result; 
-            elseif length(vec) == 4
+            elseif length(vec) == 4                                         % if four criteria failed
                 result = strcat(num2str(vec(1)),num2str(vec(2)),...
                     num2str(vec(3)),num2str(vec(4)));
                 result = str2num(result);
                 qc_class_mat(n,k) = result; 
-            elseif length(vec) == 5
+            elseif length(vec) == 5                                         % if five criteria failed
                 result = strcat(num2str(vec(1)),num2str(vec(2)),...
                     num2str(vec(3)),num2str(vec(4)),num2str(vec(5)));
                 result = str2num(result);
                 qc_class_mat(n,k) = result; 
-            elseif length(vec) == 6
+            elseif length(vec) == 6                                         % if six criteria failed
                 result = strcat(num2str(vec(1)),num2str(vec(2)),...
                     num2str(vec(3)),num2str(vec(4)),num2str(vec(5)),...
                     num2str(vec(6)));
                 result = str2num(result);
                 qc_class_mat(n,k) = result; 
             end
-            if isfield(a.LP,'stats') && k<=length(a.LP.stats) && ...
-                    ~isempty(a.LP.stats{k,1}) && ...
-                    sum(a.LP.stats{k,1}.qc.logicVec) == 0
+
+            % assess the removal of this sweep
+            if sum(a.LP.stats{k,1}.qc.logicVec) == 0 %isfield(a.LP,'stats') &&k<=length(a.LP.stats) && ...~isempty(a.LP.stats{k,1}) && ...
                 sweepID(n,k) = k;
                 sweepBinary(n,k) = 1;
                 sweepBinaryOrig(1,k) = 1;
@@ -168,9 +175,9 @@ for n = 1:length(cellList)
                 sweepBinary(n,k) = 0;
                 sweepBinaryOrig(1,k) = 0;
             end
-            processSpQC
-            % remove sweeps that exceed good/bad spike ratio  0.3
         end
+        
+        % add sp qc
         qc_logic_mat(n,1:6) = qc_logic;
         processBwSweepsQC                                                   % across sweep QC
     end
@@ -178,20 +185,19 @@ for n = 1:length(cellList)
         qc_class_mat(n,:) = 0;
     end
     
-    % save spike-wise QC
-    if exist('input_current_spqc','var')
+    if exist('input_current_spqc','var')                                    % save csv files for spike-wise QC
         T = table(input_current_spqc,spqcmatnbinary);
-        writetable(T,[savefilenameInd,' ',cellID,'.xlsx'],'Sheet',...
-            'Sheet1','WriteRowNames',true)
+        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID,...
+            '.xlsx'],'Sheet','Sheet1','WriteRowNames',true)
         T = table(input_current_spqc,spqcmatnbinaryid);
-        writetable(T,[savefilenameInd,' ',cellID,'.xlsx'],'Sheet',...
-            'Sheet2','WriteRowNames',true)
+        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID,...
+            '.xlsx'],'Sheet','Sheet2','WriteRowNames',true)
         T = table(input_current_spqc,spqcvectag);
-        writetable(T,[savefilenameInd,' ',cellID,'.xlsx'],'Sheet',...
-            'Sheet3','WriteRowNames',true)
+        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID, ...
+            '.xlsx'],'Sheet','Sheet3','WriteRowNames',true)
         T = table(input_current_spqc,spqcmatn);
-        writetable(T,[savefilenameInd,' ',cellID,'.xlsx'],'Sheet',...
-            'Sheet4','WriteRowNames',true)
+        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID, ...
+            '.xlsx'],'Sheet','Sheet4','WriteRowNames',true)
         clear input_current_spqc spqcmatnbinary spqcmatnbinaryid
     end
     
@@ -207,30 +213,30 @@ for n = 1:length(cellList)
         time_constant2(n,1) = round(double(a.LP.subSummary.tauSS),2);
         if a.LP.fullStruct == 1
             k = find(ismember(sweepID(n,:),...
-                find(round(double(a.LP.sweepAmps)) == -90))==1);                         % find -90 pA input
+                find(round(double(a.LP.sweepAmps)) == -90))==1);            % find -90 pA input
             if length(k)>1
                 k = k(1);
             end
             if ~isempty(k)
-                getSubthresholdStats
-            else
+                getSubthresholdStats                                        % get subthreshold stats
+            else                                                            % if no -90 pA sweep
                 k = find(ismember(sweepID(n,:),...
-                    find(round(double(a.LP.sweepAmps)) == -70))==1);
+                    find(round(double(a.LP.sweepAmps)) == -70))==1);        % find -70 pA sweep
                 if length(k)>1
                     k = k(1);
                 end
                 if ~isempty(k)
-                    getSubthresholdStats
-                else
+                    getSubthresholdStats                                    % get subthreshold stats
+                else                                                        % if no -70 pA sweep
                     k = find(ismember(sweepID(n,:),...
-                        find(round(double(a.LP.sweepAmps)) == -50))==1);
+                        find(round(double(a.LP.sweepAmps)) == -50))==1);    % find -50 pA sweep
                     if length(k)>1
                         k = k(1);
                     end
                     if ~isempty(k)
-                        getSubthresholdStats
-                    else
-                        subamp(n,1) = NaN;
+                        getSubthresholdStats                                % get subthreshold stats
+                    else                                                    % if no -50 pA sweeps
+                        subamp(n,1) = NaN;                                  % add NaNs (blank spaces in csv format)
                         submin(n,1) = NaN;
                         rebound_slope(n,1) = NaN;
                         rebound_depolarization(n,1) = NaN;
