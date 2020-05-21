@@ -140,7 +140,7 @@ xticks(1:6)
 xticklabels({'interval','null dV/dt','dV/dt<5mV/ms','threshold>-20mV','t2p<20mV','t2pT>2ms'})
 xtickangle(45)
 ylabel('spike #')
-export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' suprathreshold spike QC'],'-pdf','-r100');
+export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' spike QC'],'-pdf','-r100');
 close
 
 idx0 = find(isnan(maxdVdt));                                                % number of times interval rule is broken

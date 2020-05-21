@@ -39,5 +39,5 @@ axis tight
 xlim([sp.peakTime(1)-(2/LP.acquireRes) sp.troughTime(1)+(2/LP.acquireRes)])
 
 % save figure
-export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' suprathreshold parameters'],'-pdf','-r100');
+export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' spiking parameters'],'-pdf','-r100');
 close

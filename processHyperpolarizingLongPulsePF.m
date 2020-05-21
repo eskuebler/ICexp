@@ -102,7 +102,7 @@ scatter(loc+LP.stimOff(1,k),val,'g','filled')
 scatter(round(params.reboundFitWindow/LP.acquireRes)+loc+LP.stimOff(1,k),mean(LP.V{1,k}(end-(3/LP.acquireRes):end)),'g','filled')
 
 % save figure
-export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' subthreshold parameters'],'-pdf','-r100');
+export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' hyperpolarizing parameters'],'-pdf','-r100');
 close
 
 % rebound spikes
