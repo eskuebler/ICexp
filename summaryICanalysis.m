@@ -5,7 +5,7 @@ summaryICanalysis
 clear; close all; clc;                                                      % prepare Matlab workspace
 
 % list of cells
-mainFolder = 'D:\my\';                                                      % main folder for data (EDIT HERE)
+mainFolder = 'D:\Documents Michelle\Thesis documents\';                                                      % main folder for data (EDIT HERE)
 cellList = dir([mainFolder,'genpath\*.mat']);                                 % cell list
     
 % free parameters (across sweep QC)
@@ -30,7 +30,7 @@ load('cell_types_specimen_details.mat','donor__species','specimen__id',...
 
 % initialize
 input_current_s = zeros(length(cellList),25);
-firing_rate_s = zeros(length(cellList),25);
+IC.firing_rate_s = zeros(length(cellList),25);
 removedListStd = []; rmvdStdCount = 1;
 removedListMinMax = []; rmvdMMCount = 1;
 spqcmat = zeros(length(cellList),60);
@@ -52,51 +52,47 @@ for n = 1:length(cellList)                                                  % fo
         k  = find(specimen__id==str2num(cellID));
 
         % get Allen Institute parameters
-        ID(n,:) = ([num2str(specimen__id(k)),'__AI']);
-        specimen(n,1) = donor__species(k);
-        struct(n,1) = structure__acronym(k);
-        cortical_layer(n,1) = categorical(structure__layer(k));
-        transline(n,1) = line_name(k);
-        reporterStatus(n,1) = cell_reporter_status(k);
-        dendrite_type(n,1) = tag__dendrite_type(k);
+        IC.ID(n,:) = {([num2str(specimen__id(k)),'__AI'])};% Michelle Changes
+        IC.specimen(n,1) = donor__species(k);% Michelle Changes
+        IC.struct(n,1) = structure__acronym(k);% Michelle Changes
+        IC.cortical_layer(n,1) = categorical(structure__layer(k));% Michelle Changes
+        IC.transline(n,1) = line_name(k);% Michelle Changes
+        IC.reporterStatus(n,1) = cell_reporter_status(k);% Michelle Changes
+        IC.dendrite_type(n,1) = tag__dendrite_type(k);% Michelle Changes
         AIr(n,1) = ef__ri(k);
         AItau(n,1) = ef__tau(k);
-        AIrheobase(n,1) = round(ef__threshold_i_long_square(k));
-        if sum(ismember(pyrID,str2num(ID(n,1:9))))
-            pyramidalID(n,1) = 1;
-        else
-            pyramidalID(n,1) = 0;
-        end
-        access_resistance(n,1) = NaN;
-        temperature(n,1) = 0;
+        AIrheobase(n,1) = round(ef__threshold_i_long_square(k));           
+                                                                           % Michelle change; deleted IC.PyrID
+        IC.access_resistance(n,1) = NaN;% Michelle Changes
+        IC.temperature(n,1) = 0;% Michelle Changes
         
     % pull data for PCTD cell
     else                                                                    % if a JMT cell
-        ID(n,:) = cellID;
-        specimen(n,:) = categorical(cellstr('NHP'));
-        struct(n,:) = categorical(cellstr('PFC'));
-        transline(n,:) = categorical(cellstr('N/A'));
-        reporterStatus(n,:) = categorical(cellstr('N/A'));
+        IC.ID(n,:) = {cellID} ;% Michelle Changes
+        IC.specimen(n,:) = categorical(cellstr('NHP'));% Michelle Changes
+        IC.struct(n,:) = categorical(cellstr('PFC'));
+        IC.transline(n,:) = categorical(cellstr('N/A'));% Michelle Changes
+        IC.reporterStatus(n,:) = categorical(cellstr('N/A'));% Michelle Changes
         AIr(n,1) = NaN;
         AItau(n,1) = NaN;
         AIrheobase(n,1) = NaN;
         pyramidalID(n,1) = NaN;
         if sum(ismember(layerID,cellID))
             k = find(ismember(layerID,cellID)==1);
-            if AccesResistance(k,1) ~= 'N/A'
-                access_resistance(n,1) = ...
-                    str2num(char(AccesResistance(k,1)));
-            end
-            dendrite_type(n,1) = dendrite_typeMJ(k,1);
-            cortical_layer(n,1) = Layer(k,1);
-            if Temperature(k,1) ~= 'N/A'
-                temperature(n,1) = str2num(char(Temperature(k,1)));
-            end
+%             if AccesResistance(k,1) ~= 'N/A'
+%                 IC.access_resistance(n,1) = ...
+%                     str2num(char(AccesResistance(k,1)));% Michelle Changes
+%             end
+            IC.dendrite_type(n,1) = dendrite_typeMJ(k,1);% Michelle Changes
+            IC.cortical_layer(n,1) = Layer(k,1);% Michelle Changes
+%             if Temperature(k,1) ~= 'N/A'
+%                 IC.temperature(n,1) = str2num(char(Temperature(k,1)));
+%             end
         else
-            access_resistance(n,1) = NaN;
-            dendrite_type(n,1) = categorical(cellstr('N/A'));
-            cortical_layer(n,1) = categorical(cellstr('N/A'));
-            temperature(n,1) = 0;
+            IC.access_resistance(n,1) = NaN;% Michelle Changes
+            IC.dendrite_type(n,1) = categorical(cellstr('N/A'));% Michelle Changes
+            IC.cortical_layer(n,1) = categorical(cellstr('N/A'));% Michelle Changes
+            IC.temperature(n,1) = 0;% Michelle Changes
         end
     end
 
@@ -130,7 +126,7 @@ for n = 1:length(cellList)                                                  % fo
             qc_logic = qc_logic+a.LP.stats{k,1}.qc.logicVec;                % QC logic vector (each column is a criteria)
             
             % spike-wise QC processing            
-            processSpQC                                                     % process spike-wise QC
+            %processSpQC                                                     % process spike-wise QC
             % remove sweeps that exceed good/bad spike ratio  0.3
             % add to QC vec
                         
@@ -195,9 +191,9 @@ for n = 1:length(cellList)                                                  % fo
         T = table(input_current_spqc,spqcvectag);
         writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID, ...
             '.xlsx'],'Sheet','Sheet3','WriteRowNames',true)
-        T = table(input_current_spqc,spqcmatn);
-        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID, ...
-            '.xlsx'],'Sheet','Sheet4','WriteRowNames',true)
+       % T = table(input_current_spqc,spqcmatn);
+       % writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID, ...
+          %  '.xlsx'],'Sheet','Sheet4','WriteRowNames',true)
         clear input_current_spqc spqcmatnbinary spqcmatnbinaryid
     end
     
@@ -208,8 +204,9 @@ for n = 1:length(cellList)                                                  % fo
 %         end
         % subthreshold summary parameters
         acquireRes(n,1) = double(a.LP.acquireRes);
-        resistance(n,1) = round(double(a.LP.subSummary.resistance),2);
-        time_constant(n,1) = round(double(a.LP.subSummary.tauMin),2);
+        IC.resistance_hd(n,1) = round(double(a.LP.subSummary.resistance),2);% Michelle Changes
+        IC.resistance_ss(n,1) = Michelle_calc_resistance_ss(a.LP, cellID); % Michelle Changes new line calling new function
+        IC.time_constant(n,1) = round(double(a.LP.subSummary.tauMin),2);% Michelle Changes
         time_constant2(n,1) = round(double(a.LP.subSummary.tauSS),2);
         if a.LP.fullStruct == 1
             k = find(ismember(sweepID(n,:),...
@@ -221,29 +218,29 @@ for n = 1:length(cellList)                                                  % fo
                 getSubthresholdStats                                        % get subthreshold stats
             else                                                            % if no -90 pA sweep
                 k = find(ismember(sweepID(n,:),...
-                    find(round(double(a.LP.sweepAmps)) == -70))==1);        % find -70 pA sweep
+                    find(round(double(a.LP.sweepAmps)) == -110))==1);       % find -110 pA sweep % Michelle Changes
                 if length(k)>1
                     k = k(1);
                 end
                 if ~isempty(k)
                     getSubthresholdStats                                    % get subthreshold stats
-                else                                                        % if no -70 pA sweep
+                else                                                        % if no -110 pA sweep
                     k = find(ismember(sweepID(n,:),...
-                        find(round(double(a.LP.sweepAmps)) == -50))==1);    % find -50 pA sweep
+                        find(round(double(a.LP.sweepAmps)) == -70))==1);    % find -70 pA sweep % Michelle Changes
                     if length(k)>1
                         k = k(1);
                     end
                     if ~isempty(k)
                         getSubthresholdStats                                % get subthreshold stats
-                    else                                                    % if no -50 pA sweeps
-                        subamp(n,1) = NaN;                                  % add NaNs (blank spaces in csv format)
+                    else                                                    % if no -70 pA sweeps
+                        IC.subamp(n,1) = NaN;                                  % add NaNs (blank spaces in csv format)
                         submin(n,1) = NaN;
                         rebound_slope(n,1) = NaN;
                         rebound_depolarization(n,1) = NaN;
                         nb_rebound_sp(n,1) = 0;
-                        sag(n,1) = NaN;
-                        steadystate(n,1) = NaN;
-                        sag_ratio(n,1) = NaN;
+                        IC.sag(n,1) = NaN;
+                        IC.steadystate(n,1) = NaN;
+                        IC.sag_ratio(n,1) = NaN;
                     end
                 end
             end
@@ -255,13 +252,13 @@ for n = 1:length(cellList)                                                  % fo
             temp = int_vec(find(ismember(int_vec,sweepID(n,:))==1));
             idx = I(temp);
             amp = B(temp);
-            input_current_s(n,1:length(amp)) = round(double(a.LP.sweepAmps(idx)));
+            IC.input_current_s(n,1:length(amp)) = round(double(a.LP.sweepAmps(idx)));
 
             for k = 1:length(idx)
                 if isfield(a.LP.stats{idx(k),1},'spTimes') && ...
                         sum(~isnan(a.LP.stats{idx(k),1}.spTimes))>0
                     % spike train parameters
-                    firing_rate_s(n,k) = a.LP.stats{idx(k),1}.meanFR1000;
+                    IC.firing_rate_s(n,k) = a.LP.stats{idx(k),1}.meanFR1000;
                     train_delay(n,k) = round(double(a.LP.stats{idx(k),1}.delay),2);
                     train_burst(n,k) = round(double(a.LP.stats{idx(k),1}.burst),2);
                     train_latency(n,k) = round(double(a.LP.stats{idx(k),1}.latency),2);
@@ -272,31 +269,34 @@ for n = 1:length(cellList)                                                  % fo
                     train_peak_adaptation2(n,k) = round(double(a.LP.stats{idx(k),1}.peakAdapt2),2);
                 end
             end
-
+            
             for k = 1:length(idx)
                 if isfield(a.LP.stats{idx(k),1},'spTimes') && ...
                         sum(~isnan(a.LP.stats{idx(k),1}.spTimes))>0
-                    rheobaseLP(n,1) = amp(k);
-                    delay(n,1) = round(double(a.LP.stats{idx(k),1}.delay),2);
-                    burst(n,1) = round(double(a.LP.stats{idx(k),1}.burst),2);
-                    latency(n,1) = round(double(a.LP.stats{idx(k),1}.latency),2);
-                    cv_ISI(n,1) = round(double(a.LP.stats{idx(k),1}.cvISI),2);
+                    IC.rheobaseLP(n,1) = amp(k);
+                    IC.delay(n,1) = round(double(a.LP.stats{idx(k),1}.delay),2);
+                    IC.burst_rheo(n,1) = round(double(a.LP.stats{idx(k),1}.burst),2);
+                    IC.latency(n,1) = round(double(a.LP.stats{idx(k),1}.latency),2);
+                    IC.cv_ISI_rheo(n,1) = round(double(a.LP.stats{idx(k),1}.cvISI),2);                     % Michelle added rheo
                     adaptation1(n,1) = round(double(a.LP.stats{idx(k),1}.adaptIndex),2);
                     adaptation2(n,1) = round(double(a.LP.stats{idx(k),1}.adaptIndex2),2);
                     peak_adaptation1(n,1) = round(double(a.LP.stats{idx(k),1}.peakAdapt),2);
                     peak_adaptation2(n,1) = round(double(a.LP.stats{idx(k),1}.peakAdapt2),2);
-                    peakLP(n,1) = round(double(a.LP.stats{idx(k),1}.peak(1)),2);
-                    thresholdLP(n,1) = round(double(a.LP.stats{idx(k),1}.thresholdRef(1)),2);
-                    half_width_threshold_peak(n,1) = round(double(a.LP.stats{idx(k),1}.fullWidthTP(1)),2);
-                    half_width_peak_trough(n,1) = round(double(a.LP.stats{idx(k),1}.fullWidthPT(1)),2);
-                    height_threshold_peak(n,1) = round(double(a.LP.stats{idx(k),1}.heightTP(1)),2);
-                    height_peak_trough(n,1) = round(double(a.LP.stats{idx(k),1}.heightPT(1)),2);
-                    peak_up_stroke(n,1) = round(double(a.LP.stats{idx(k),1}.peakUpStroke(1)),2);
-                    peak_down_stroke(n,1) = round(double(a.LP.stats{idx(k),1}.peakDownStroke(1)),2);
-                    peak_stroke_ratio(n,1) = round(double(a.LP.stats{idx(k),1}.peakStrokeRatio(1)),2);
-                    trough(n,1) = round(double(a.LP.stats{idx(k),1}.trough(1)),2);
-                    fastTrough(n,1) = a.LP.stats{idx(k),1}.fastTroughDur(1);
-                    slowTrough(n,1) = a.LP.stats{idx(k),1}.slowTroughDur(1);
+                    IC.peakLP(n,1) = round(double(a.LP.stats{idx(k),1}.peak(1)),2);
+                    IC.thresholdLP(n,1) = round(double(a.LP.stats{idx(k),1}.thresholdRef(1)),2);
+                    IC.half_width_threshold_peak(n,1) = round(double(a.LP.stats{idx(k),1}.fullWidthTP(1)),2);
+                    IC.half_width_peak_trough(n,1) = round(double(a.LP.stats{idx(k),1}.fullWidthPT(1)),2);
+                    IC.height_threshold_peak(n,1) = round(double(a.LP.stats{idx(k),1}.heightTP(1)),2);
+                    IC.height_peak_trough(n,1) = round(double(a.LP.stats{idx(k),1}.heightPT(1)),2);
+                    IC.peak_up_stroke(n,1) = round(double(a.LP.stats{idx(k),1}.peakUpStroke(1)),2);
+                    IC.peak_down_stroke(n,1) = round(double(a.LP.stats{idx(k),1}.peakDownStroke(1)),2);
+                    IC.peak_stroke_ratio(n,1) = round(double(a.LP.stats{idx(k),1}.peakStrokeRatio(1)),2);
+                    IC.trough(n,1) = round(double(a.LP.stats{idx(k),1}.trough(1)),2);
+                    IC.fastTrough(n,1) = a.LP.stats{idx(k),1}.fastTroughDur(1);
+                    IC.slowTrough(n,1) = a.LP.stats{idx(k),1}.slowTroughDur(1);   
+                 
+                   
+
                     if size(a.LP.stats{idx(k),1}.waves,1) > 1
                         wf(n,:) = round(mean(a.LP.stats{idx(k),1}.waves),2);
                     else
@@ -307,12 +307,37 @@ for n = 1:length(cellList)                                                  % fo
                     rheobaseLP(n,1) = NaN;
                 end
             end
-            maxFiringRate(n,1) = max(firing_rate_s(n,:));
+            IC.maxFiringRate(n,1) = max(IC.firing_rate_s(n,:));
+            IC.mdn_insta_freq(n,1) = Michelle_median_isi(a.LP);                            % Michelle code: Inversion of median of all ISIs of the cell 
+
+            %Picking the hero sweep to save one spike train parameter per cell
+                    
+            IC.burst_hero(n,1) = ;
+            IC.adaptation1(n,1) = ;
+            IC.adaptation2(n,1) = ;
+            IC.cv_ISI_hero(n,1) = ;                     % Michelle added rheo
+        
 
             clear B I idx amp temp k
         end
     end
 end
+
+
+
+
+
+
+
+
+%Clean up variables that have a zero and should not
+
+IC.resistance_ss(IC.resistance_ss==0)= NaN;                                % Michelle code
+IC.resistance_hd(IC.resistance_hd==0)= NaN;                                % Michelle code
+IC.Vrest_sag_sweep(IC.Vrest_sag_sweep==0)= NaN;                            % Michelle code
+IC.sag_ratio(IC.sag_ratio==0)= NaN;                                        % Michelle code
+IC.mdn_insta_freq(IC.mdn_insta_freq==0)= NaN;  
+
 
 % ind = find(diffMinMaxV~=0);
 % figure('Position',[50 50 300 250]); set(gcf,'color','w');
@@ -353,64 +378,36 @@ end
 
 % QCanalysis
 
-% all parameters
-T = table(ID,specimen,struct,cortical_layer,transline,reporterStatus,...
-    dendrite_type,pyramidalID,temperature,resistance,access_resistance,...
-    time_constant,time_constant2,subamp,submin,rebound_slope,nb_rebound_sp,sag,...
-    steadystate,sag_ratio,rheobaseLP,delay,burst,latency,cv_ISI,adaptation1,...
-    adaptation2,peak_adaptation1,peak_adaptation2,peakLP,thresholdLP,...
-    half_width_threshold_peak,half_width_peak_trough,...
-    height_threshold_peak,height_peak_trough,...
-    peak_up_stroke,peak_down_stroke,peak_stroke_ratio,trough,...
-    fastTrough,slowTrough,maxFiringRate);
-    writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet1',...
-        'WriteRowNames',true)
-% sweeps that pass qc
-T = table(ID,qc_class_mat);
-    writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet2',...
-        'WriteRowNames',true)
-% spike trains all sweeps
-T = table(ID,input_current_s,firing_rate_s,train_delay,train_burst,...
-    train_latency,train_cv_ISI,train_adaptation1,train_adaptation2,...
-    train_peak_adaptation1,train_peak_adaptation2);
-    writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet3',...
-        'WriteRowNames',true)
-% qc parameters for all sweeps
-T = table(ID,meanOrigV,diffMinMaxV,stdOrigV,qc_V_vec,qc_restVpre,qc_restVpost,qc_restVdiffpreNpost,...
-    qc_rmse_pre_lt,qc_rmse_post_lt,qc_rmse_pre_st,qc_rmse_post_st);
-    writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet4',...
-        'WriteRowNames',true)
-% waveforms
-T = table(ID,wf);
-    writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet5',...
-        'WriteRowNames',true)
-% close excel
-system('taskkill /F /IM EXCEL.EXE');
-
-% plot our analysis versus Allen Institute
-listnan = isnan(resistance);
-resistance(listnan) = [];
-AIr(listnan) = [];
-listnan = isnan(time_constant);
-time_constant(listnan) = [];
-AItau(listnan) = [];
-listnan = isnan(rheobaseLP);
-rheobaseLP(listnan) = [];
-AIrheobase(listnan) = [];
-
-figure('Position',[50 50 800 250]); set(gcf,'color','w');
-subplot(1,3,1)
-scatter(AIr,resistance)
-xlabel('resistance (AI)')
-ylabel('resistance (JMT)')
-[r_RI,p_Ri] = corr(AIr,resistance);
-subplot(1,3,2)
-scatter(AItau,time_constant)
-xlabel('time constant (AI)')
-ylabel('time constant (JMT)')
-[r_tau,p_tau] = corr(AItau,time_constant);
-subplot(1,3,3)
-scatter(AIrheobase,rheobaseLP)
-xlabel('rheobase (AI)')
-ylabel('rheobase (JMT)')
-[r_rheobase,p_rheobase] = corr(AIrheobase,rheobaseLP);
+% % all parameters
+% T = table(IC.ID,IC.specimen,IC.struct,IC.cortical_layer,IC.transline,IC.reporterStatus,...
+%     IC.dendrite_type,pyramidalID,IC.temperature,IC.resistance,IC.access_resistance,...
+%     IC.time_constant,time_constant2,IC.subamp,submin,rebound_slope,nb_rebound_sp,IC.sag,...
+%     IC.steadystate,IC.sag_ratio,IC.rheobaseLP,IC.delay,IC.burst,IC.latency,IC.cv_ISI,adaptation1,...
+%     adaptation2,peak_adaptation1,peak_adaptation2,IC.peakLP,IC.thresholdLP,...
+%     IC.half_width_threshold_peak,IC.half_width_peak_trough,...
+%     IC.height_threshold_peak,IC.height_peak_trough,...
+%     IC.peak_up_stroke,IC.peak_down_stroke,IC.peak_stroke_ratio,IC.trough,...
+%     IC.fastTrough,IC.slowTrough,IC.maxFiringRate);
+%     writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet1',...
+%         'WriteRowNames',true)
+% % sweeps that pass qc
+% T = table(IC.ID,qc_class_mat);
+%     writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet2',...
+%         'WriteRowNames',true)
+% % spike trains all sweeps
+% T = table(IC.ID,IC.input_current_s,IC.firing_rate_s,train_delay,train_burst,...
+%     train_latency,train_cv_ISI,train_adaptation1,train_adaptation2,...
+%     train_peak_adaptation1,train_peak_adaptation2);
+%     writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet3',...
+%         'WriteRowNames',true)
+% % qc parameters for all sweeps
+% T = table(IC.ID,meanOrigV,diffMinMaxV,stdOrigV,qc_V_vec,qc_restVpre,qc_restVpost,qc_restVdiffpreNpost,...
+%     qc_rmse_pre_lt,qc_rmse_post_lt,qc_rmse_pre_st,qc_rmse_post_st);
+%     writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet4',...
+%         'WriteRowNames',true)
+% % waveforms
+% T = table(IC.ID,wf);
+%     writetable(T,[savefilename,'.xlsx'],'Sheet','Sheet5',...
+%         'WriteRowNames',true)
+% % close excel
+% system('taskkill /F /IM EXCEL.EXE');
