@@ -308,33 +308,24 @@ for n = 1:length(cellList)                                                  % fo
                 end
             end
             IC.maxFiringRate(n,1) = max(IC.firing_rate_s(n,:));
-            IC.mdn_insta_freq(n,1) = Michelle_median_isi(a.LP);                            % Michelle code: Inversion of median of all ISIs of the cell 
+            IC.mdn_insta_freq(n,1) = Michelle_median_isi(a.LP);                            % Inversion of median of all ISIs of the cell 
 
-            %Picking the hero sweep to save one spike train parameter per cell
+            %Picking the "hero sweep" to save one spike train parameter per cell
                     
             IC.burst_hero(n,1) = ;
             IC.adaptation1(n,1) = ;
             IC.adaptation2(n,1) = ;
-            IC.cv_ISI_hero(n,1) = ;                     % Michelle added rheo
-        
+            IC.cv_ISI_hero(n,1) = ;                   
 
             clear B I idx amp temp k
         end
     end
 end
 
-
-
-
-
-
-
-
 %Clean up variables that have a zero and should not
 
-IC.resistance_ss(IC.resistance_ss==0)= NaN;                                % Michelle code
-IC.resistance_hd(IC.resistance_hd==0)= NaN;                                % Michelle code
-IC.Vrest_sag_sweep(IC.Vrest_sag_sweep==0)= NaN;                            % Michelle code
-IC.sag_ratio(IC.sag_ratio==0)= NaN;                                        % Michelle code
+IC.resistance_ss(IC.resistance_ss==0)= NaN;                                
+IC.resistance_hd(IC.resistance_hd==0)= NaN;                                
+IC.Vrest_sag_sweep(IC.Vrest_sag_sweep==0)= NaN;                            
+IC.sag_ratio(IC.sag_ratio==0)= NaN;                                       
 IC.mdn_insta_freq(IC.mdn_insta_freq==0)= NaN;  
-
