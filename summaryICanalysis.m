@@ -5,8 +5,8 @@ summaryICanalysis
 clear; close all; clc;                                                      % prepare Matlab workspace
 
 % list of cells
-mainFolder = 'D:\Documents Michelle\Thesis documents\';                                                      % main folder for data (EDIT HERE)
-cellList = dir([mainFolder,'genpath\*.mat']);                                 % cell list
+mainFolder = 'D:\my\';                                                      % main folder for data (EDIT HERE)
+cellList = dir([mainFolder,'genpath\*.mat']);                               % cell list
     
 % free parameters (across sweep QC)
 minNmaxThres = 10;                                                          % threshold for difference b/w min and max voltage
