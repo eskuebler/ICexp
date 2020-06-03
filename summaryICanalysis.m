@@ -14,7 +14,7 @@ origStdThresMax = 3;                                                        % ab
 origStdThresMin = 0.7;                                                      % below this threshold cells are not QC'd sweep-wise any further      
 
 % load data
-load('dendrite_layer.mat')                                                  % load Michelle's NHP data
+load('manual_entry_data.mat')                                               % load Michelle's NHP data
 layerID = ID; dendrite_typeMJ = dendrite_type; clear ID dendrite_type       % adjust variable names for overlap
 load('pyramidal cell IDs.mat')                                              % load Michelle's pyramidal cells
 pyrID = ID; clear ID                                                        % adjust variable names for overlap
@@ -154,11 +154,13 @@ for n = 1:length(cellList)                                                  % fo
 %         end
 
 %% subthreshold summary parameters
+IC.resistance_hd(n,1) = Michelle_calc_resistance_hd(a.LP); % Michelle Changes new line calling new function
+IC.resistance_ss(n,1) = Michelle_calc_resistance_ss(a.LP); % Michelle Changes new line calling new function
+IC.Vrest(n,1) = Michelle_calc_rmp(a.LP);                    % Michelle Changes new line calling new function
 
       if a.LP.fullStruct == 1          
         acquireRes(n,1) = double(a.LP.acquireRes);
-        IC.resistance_hd(n,1) = round(double(a.LP.subSummary.resistance),2);% Michelle Changes
-        IC.resistance_ss(n,1) = Michelle_calc_resistance_ss(a.LP, cellID); % Michelle Changes new line calling new function
+   
         IC.time_constant(n,1) = round(double(a.LP.subSummary.tauMin),2);% Michelle Changes
         %time_constant2(n,1) = round(double(a.LP.subSummary.tauSS),2);
         
@@ -237,9 +239,9 @@ for n = 1:length(cellList)                                                  % fo
                         sum(~isnan(a.LP.stats{idx(k),1}.spTimes))>0
                     % spike analysis
                     IC.rheobaseLP(n,1) = amp(k);
-                    IC.delay(n,1) = round(double(a.LP.stats{idx(k),1}.delay),2);
+                    IC.delay_rheo(n,1) = round(double(a.LP.stats{idx(k),1}.delay),2);
                     IC.burst_rheo(n,1) = round(double(a.LP.stats{idx(k),1}.burst),2);
-                    IC.latency(n,1) = round(double(a.LP.stats{idx(k),1}.latency),2);
+                    IC.latency_rheo(n,1) = round(double(a.LP.stats{idx(k),1}.latency),2);
                     IC.peakLP(n,1) = round(double(a.LP.stats{idx(k),1}.peak(1)),2);
                     IC.thresholdLP(n,1) = round(double(a.LP.stats{idx(k),1}.thresholdRef(1)),2);
                     IC.half_width_threshold_peak(n,1) = round(double(a.LP.stats{idx(k),1}.fullWidthTP(1)),2);
@@ -251,8 +253,12 @@ for n = 1:length(cellList)                                                  % fo
                     IC.peak_stroke_ratio(n,1) = round(double(a.LP.stats{idx(k),1}.peakStrokeRatio(1)),2);
                     IC.trough(n,1) = round(double(a.LP.stats{idx(k),1}.trough(1)),2);
                     IC.fastTrough(n,1) = a.LP.stats{idx(k),1}.fastTroughDur(1);
-                    IC.slowTrough(n,1) = a.LP.stats{idx(k),1}.slowTroughDur(1);   
-                 
+                    IC.slowTrough(n,1) = a.LP.stats{idx(k),1}.slowTroughDur(1);
+                    if IC.slowTrough(n,1) < 2
+                     IC.fAHPamp(n,1) = IC.thresholdLP(n,1) - IC.trough(n,1);
+                    else
+                     IC.fAHPamp(n,1) = NaN;
+                    end
                     if size(a.LP.stats{idx(k),1}.waves,1) > 1
                         wf(n,:) = round(mean(a.LP.stats{idx(k),1}.waves),2);
                     else
@@ -267,7 +273,7 @@ for n = 1:length(cellList)                                                  % fo
 %% Global spiketrain parameters and picking "Hero sweep" for more spike train parameters per cell  
               
      if a.LP.fullStruct == 1 
-        IC.maxFiringRate(n,1) = max(IC.firing_rate_s(n,:));                   % Obtain maximum firing rate
+        IC.maxFiringRate(n,1) = max(IC.firing_rate_s(n,:));                % Obtain maximum firing rate
         IC.mdn_insta_freq(n,1) = Michelle_median_isi(a.LP);                % Obtain the median ISI 
         k = [];                                                            % resetting k
         flag = 0;                                                          % variable to fire the if condition in while loop only one time
@@ -277,7 +283,7 @@ for n = 1:length(cellList)                                                  % fo
            if k > 0  
              while sum(ismember(sweepID(n,:), k)) == 0 || ...
                      isfield(a.LP.stats{k,1},'burst') == 0 || ...
-                     firing_rate_s(n,k)== 0 || ...
+                     IC.firing_rate_s(n,k)== 0 || ...
                      a.LP.sweepAmps(k) <= IC.rheobaseLP(n,1) || ...
                      a.LP.sweepAmps(k) > 2*IC.rheobaseLP(n,1)
                   k = k -1;  
@@ -291,26 +297,27 @@ for n = 1:length(cellList)                                                  % fo
              end  
            end
            if k == 0 
-                  IC.firing_rate_s(n,1) = NaN;
+                  IC.firing_rate_s_hero(n,1) = NaN;
                   IC.burst_hero(n,1) = NaN;
-                  IC.delay(n,1) =   NaN;
-                  IC.latency(n,1) = NaN;
+                  IC.delay_hero(n,1) =   NaN;
+                  IC.latency_hero(n,1) = NaN;
                   IC.cv_ISI(n,1) =  NaN;
                   IC.adaptation2(n,1) = NaN;
                   IC.hero_amp(n,1) = NaN;
            elseif length(k) > 1
-           IC.firing_rate_s(n,1) = mean(firing_rate_s(n,k(1:length(k))));
+           IC.firing_rate_s_hero(n,1) = mean(IC.firing_rate_s(n,k(1:length(k))));
            IC.burst_hero(n,1) = mean(train_burst(n,k(1:length(k))));
-           IC.delay(n,1) =   mean(train_delay(n,k(1:length(k))));
-           IC.latency(n,1) = mean(train_latency(n,k(1:length(k))));
+           IC.delay_hero(n,1) =   mean(train_delay(n,k(1:length(k))));
+           IC.latency_hero(n,1) = mean(train_latency(n,k(1:length(k))));
            IC.cv_ISI(n,1) =   mean(train_cv_ISI(n,k(1:length(k))));
+           IC.adaptation1(n,1) = mean(train_adaptation1(n,k(1:length(k))));
            IC.adaptation2(n,1) = mean(train_adaptation2(n,k(1:length(k))));
            IC.hero_amp(n,1) = unique(a.LP.sweepAmps(k));       
            else
-           IC.firing_rate_s(n,1) =   firing_rate_s(n,k);
+           IC.firing_rate_s_hero(n,1) = IC.firing_rate_s(n,k(1:length(k)));
            IC.burst_hero(n,1) =  a.LP.stats{k, 1}.burst;
-           IC.delay(n,1) =   a.LP.stats{k, 1}.delay;
-           IC.latency(n,1) = a.LP.stats{k, 1}.latency;
+           IC.delay_hero(n,1) =   a.LP.stats{k, 1}.delay;
+           IC.latency_hero(n,1) = a.LP.stats{k, 1}.latency;
            IC.cv_ISI(n,1) =   a.LP.stats{k, 1}.cvISI ;  
            IC.adaptation1(n,1) = a.LP.stats{k, 1}.adaptIndex; 
            IC.adaptation2(n,1) = a.LP.stats{k, 1}.adaptIndex2; 
@@ -337,13 +344,8 @@ IC.firing_rate_s(IC.firing_rate_s==0)= NaN;
 for  n = 1:length(cellList)  
   fieldnames_var = fieldnames(IC);                                         % Getting the variable names to overwrite in them
   if isnan(IC.resistance_hd(n,1)) || isnan(IC.rheobaseLP(n,1))             % If crucial features cannot be determined, all parameters are set to NaN  
-    for var = 8:length(fieldnames_var)-2                                   % Leave the first 7 and last 2 untouched, since they are still usefull
+    for var = 10:length(fieldnames_var)-2                                   % Leave the first 7 and last 2 untouched, since they are still usefull
       IC.(fieldnames_var{var})(n,1) = NaN;
     end
   end
  end
-
-
-
-
-
