@@ -6,7 +6,7 @@ clear; close all; clc;                                                      % pr
 
 % list of cells
 mainFolder = 'D:\my\';                                                      % main folder for data (EDIT HERE)
-cellList = dir([mainFolder,'genpath\*.mat']);                               % cell list
+cellList = dir([mainFolder,'genpath\*.mat']);                                 % cell list
     
 % free parameters (across sweep QC)
 minNmaxThres = 10;                                                          % threshold for difference b/w min and max voltage
@@ -49,43 +49,48 @@ for n = 1:length(cellList)                                                  % fo
         k  = find(specimen__id==str2num(cellID));
 
         % get Allen Institute parameters
-        IC.ID(n,:) = {([num2str(specimen__id(k)),'__AI'])};% Michelle Changes
-        IC.specimen(n,1) = donor__species(k);% Michelle Changes
-        IC.struct(n,1) = structure__acronym(k);% Michelle Changes
-        IC.cortical_layer(n,1) = categorical(structure__layer(k));% Michelle Changes
+        IC.ID(n,:) = {([num2str(specimen__id(k)),'__AI'])};
+        IC.specimen(n,1) = donor__species(k);
+        IC.struct(n,1) = structure__acronym(k);
+        IC.cortical_layer(n,1) = categorical(structure__layer(k));
         IC.transline(n,1) = line_name(k);% Michelle Changes
-        IC.reporterStatus(n,1) = cell_reporter_status(k);% Michelle Changes
-        IC.dendrite_type(n,1) = tag__dendrite_type(k);% Michelle Changes
-        AIrheobase(n,1) = round(ef__threshold_i_long_square(k));           
-                                                                           % Michelle change; deleted IC.PyrID
-        IC.access_resistance(n,1) = NaN;% Michelle Changes
-        IC.temperature(n,1) = 0;% Michelle Changes
+        IC.reporterStatus(n,1) = cell_reporter_status(k);
+        IC.dendrite_type(n,1) = tag__dendrite_type(k);
+        AIrheobase(n,1) = round(ef__threshold_i_long_square(k));                                                                                     % Michelle change; deleted IC.PyrID
+        IC.access_resistance(n,1) = NaN;
+        IC.temperature(n,1) = 0;
         
     % pull data for PCTD cell
     else                                                                    % if a JMT cell
-        IC.ID(n,:) = {cellID} ;% Michelle Changes
-        IC.specimen(n,:) = categorical(cellstr('NHP'));% Michelle Changes
+        IC.ID(n,:) = {cellID} ;
+        IC.specimen(n,:) = categorical(cellstr('NHP'));
         IC.struct(n,:) = categorical(cellstr('PFC'));
-        IC.transline(n,:) = categorical(cellstr('N/A'));% Michelle Changes
-        IC.reporterStatus(n,:) = categorical(cellstr('N/A'));% Michelle Changes
-        pyramidalID(n,1) = NaN;
+        IC.transline(n,:) = categorical(cellstr('N/A'));
+        IC.reporterStatus(n,:) = categorical(cellstr('N/A'));
         
         if sum(ismember(layerID,cellID))
             k = find(ismember(layerID,cellID)==1);
+            
+            %Not implemented, because values have to be revised
 %             if AccesResistance(k,1) ~= 'N/A'
 %                 IC.access_resistance(n,1) = ...
-%                     str2num(char(AccesResistance(k,1)));% Michelle Changes
+%                     str2num(char(AccesResistance(k,1)));
 %             end
-            IC.dendrite_type(n,1) = dendrite_typeMJ(k,1);% Michelle Changes
-            IC.cortical_layer(n,1) = Layer(k,1);% Michelle Changes
+
+
+
+            IC.dendrite_type(n,1) = dendrite_typeMJ(k,1);
+            IC.cortical_layer(n,1) = Layer(k,1);
+            
 %             if Temperature(k,1) ~= 'N/A'
 %                 IC.temperature(n,1) = str2num(char(Temperature(k,1)));
 %             end
+
         else
-            IC.access_resistance(n,1) = NaN;% Michelle Changes
-            IC.dendrite_type(n,1) = categorical(cellstr('N/A'));% Michelle Changes
-            IC.cortical_layer(n,1) = categorical(cellstr('N/A'));% Michelle Changes
-            IC.temperature(n,1) = 0;% Michelle Changes
+            IC.access_resistance(n,1) = NaN;
+            IC.dendrite_type(n,1) = categorical(cellstr('N/A'));
+            IC.cortical_layer(n,1) = categorical(cellstr('N/A'));
+            IC.temperature(n,1) = 0;
         end
     end
    
@@ -127,9 +132,9 @@ for n = 1:length(cellList)                                                  % fo
         qc_logic_mat(n,1:6) = qc_logic;
         processBwSweepsQC                                                   % across sweep QC
     end
-%     if size(qc_class_mat,1)~=n
-%         qc_class_mat(n,:) = 0;
-%     end
+    if size(qc_class_mat,1)~=n
+         qc_class_mat(n,:) = 0;
+    end
     
 %     if exist('input_current_spqc','var')                                    % save csv files for spike-wise QC
 %         T = table(input_current_spqc,spqcmatnbinary);
@@ -173,21 +178,21 @@ IC.Vrest(n,1) = Michelle_calc_rmp(a.LP);                    % Michelle Changes n
                 getSubthresholdStats                                        % get subthreshold stats
             else                                                            % if no -90 pA sweep
                 k = find(ismember(sweepID(n,:),...
-                    find(round(double(a.LP.sweepAmps)) == -110))==1);       % find -110 pA sweep % Michelle Changes
+                    find(round(double(a.LP.sweepAmps)) == -70))==1);       % find -70 pA sweep % Michelle Changes
                 if length(k)>1
                     k = k(1);
                 end
                 if ~isempty(k)
                     getSubthresholdStats                                    % get subthreshold stats
-                else                                                        % if no -110 pA sweep
+                else                                                        % if no -70 pA sweep
                     k = find(ismember(sweepID(n,:),...
-                        find(round(double(a.LP.sweepAmps)) == -70))==1);    % find -70 pA sweep % Michelle Changes
+                        find(round(double(a.LP.sweepAmps)) == -110))==1);    % find -110 pA sweep 
                     if length(k)>1
                         k = k(1);
                     end
                     if ~isempty(k)
                         getSubthresholdStats                                % get subthreshold stats
-                    else                                                    % if no -70 pA sweeps
+                    else                                                    % if no -110pA sweeps
                         IC.subamp(n,1) = NaN;                                  % add NaNs (blank spaces in csv format)
                         IC.submin(n,1) = NaN;
                        % rebound_slope(n,1) = NaN;
@@ -197,7 +202,7 @@ IC.Vrest(n,1) = Michelle_calc_rmp(a.LP);                    % Michelle Changes n
                         IC.steadystate(n,1) = NaN;
                         IC.sag_ratio(n,1) = NaN;
                     end
-                 end
+                end
             end
       end
              
@@ -254,17 +259,17 @@ IC.Vrest(n,1) = Michelle_calc_rmp(a.LP);                    % Michelle Changes n
                     IC.trough(n,1) = round(double(a.LP.stats{idx(k),1}.trough(1)),2);
                     IC.fastTrough(n,1) = a.LP.stats{idx(k),1}.fastTroughDur(1);
                     IC.slowTrough(n,1) = a.LP.stats{idx(k),1}.slowTroughDur(1);
-                    if IC.slowTrough(n,1) < 2
-                     IC.fAHPamp(n,1) = IC.thresholdLP(n,1) - IC.trough(n,1);
-                    else
+                    if IC.slowTrough(n,1) < 2                                %  check if the cell has a true fAHP, its peak should be more depolarized than any other afterhyperpolarizations                         
+                     IC.fAHPamp(n,1) = IC.thresholdLP(n,1) - IC.trough(n,1); %  amplitude of fAHP from threshold
+                    else 
                      IC.fAHPamp(n,1) = NaN;
                     end
-                    if size(a.LP.stats{idx(k),1}.waves,1) > 1
-                        wf(n,:) = round(mean(a.LP.stats{idx(k),1}.waves),2);
-                    else
-                        wf(n,:) = round(a.LP.stats{idx(k),1}.waves,2);
-                    end
-                    break
+%                    if size(a.LP.stats{idx(k),1}.waves,1) > 1
+%                        wf(n,:) = round(mean(a.LP.stats{idx(k),1}.waves),2);
+%                    else
+%                        wf(n,:) = round(a.LP.stats{idx(k),1}.waves,2);
+%                    end
+%                    break
                 else
                     IC.rheobaseLP(n,1) = NaN;
                 end
@@ -274,7 +279,7 @@ IC.Vrest(n,1) = Michelle_calc_rmp(a.LP);                    % Michelle Changes n
               
      if a.LP.fullStruct == 1 
         IC.maxFiringRate(n,1) = max(IC.firing_rate_s(n,:));                % Obtain maximum firing rate
-        IC.mdn_insta_freq(n,1) = Michelle_median_isi(a.LP);                % Obtain the median ISI 
+        IC.mdn_insta_freq(n,1) = Michelle_median_isi(a.LP);                % Obtain the median ISI of all suprathreshold sweeps
         k = [];                                                            % resetting k
         flag = 0;                                                          % variable to fire the if condition in while loop only one time
         
@@ -341,11 +346,15 @@ IC.rheobaseLP(IC.rheobaseLP==0)= NaN;
 IC.hero_amp(IC.hero_amp==0)=NaN;
 IC.firing_rate_s(IC.firing_rate_s==0)= NaN;
 
+fieldnames_var = fieldnames(IC);                                           % Getting the variable names to overwrite in them
+
 for  n = 1:length(cellList)  
-  fieldnames_var = fieldnames(IC);                                         % Getting the variable names to overwrite in them
   if isnan(IC.resistance_hd(n,1)) || isnan(IC.rheobaseLP(n,1))             % If crucial features cannot be determined, all parameters are set to NaN  
     for var = 10:length(fieldnames_var)-2                                   % Leave the first 7 and last 2 untouched, since they are still usefull
       IC.(fieldnames_var{var})(n,1) = NaN;
     end
   end
  end
+
+
+
