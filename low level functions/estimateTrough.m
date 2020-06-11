@@ -21,19 +21,20 @@ end
 QCpeakNtrough
 %}
 
-diffpeak2trough = abs(trough-sp.peak);
+% diffpeak2trough = abs(trough-sp.peak);
 
-LP.qcRemovals.QCmatTrough = [(diffpeak2trough < params.minDiffPeak2Trough)', ...
-    (trough>params.minTrough)'];
+% LP.qcRemovals.QCmatTrough = [(diffpeak2trough < params.minDiffPeak2Trough)', ...
+%     (trough>params.minTrough)'];
+LP.qcRemovals.QCmatTrough = trough>params.minTrough';
 
-idx = diffpeak2trough < params.minDiffPeak2Trough;
-LP.qcRemovals.diffpeak2trough = LP.putSpTimes2(idx);
-LP.putSpTimes2(idx) = [];
-sp.peak(idx) = []; sp.peakTime(idx) = []; 
-trough(idx) = []; troughTime(idx) = [];
-sp.threshold(idx) = []; sp.thresholdTime(idx) = [];
-sp.maxdVdt(idx) = []; sp.maxdVdtTime(idx) = [];
-sp.thresholdRef(idx) = []; sp.thresholdRefTime(idx) = [];
+% idx = diffpeak2trough < params.minDiffPeak2Trough;
+% LP.qcRemovals.diffpeak2trough = LP.putSpTimes2(idx);
+% LP.putSpTimes2(idx) = [];
+% sp.peak(idx) = []; sp.peakTime(idx) = []; 
+% trough(idx) = []; troughTime(idx) = [];
+% sp.threshold(idx) = []; sp.thresholdTime(idx) = [];
+% sp.maxdVdt(idx) = []; sp.maxdVdtTime(idx) = [];
+% sp.thresholdRef(idx) = []; sp.thresholdRefTime(idx) = [];
 
 idx2 = trough > params.minTrough;
 LP.qcRemovals.minTrough = LP.putSpTimes2(idx2);

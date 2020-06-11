@@ -1,7 +1,7 @@
-function b = summarizeSubthreshold(LP,cellID,folder)
-
-figure('Position',[50 50 900 250]); set(gcf,'color','w');
-
+function b = summarizeSubthreshold(LP,cellID,folder,params)
+if params.plot_all == 1
+    figure('Position',[50 50 900 250]); set(gcf,'color','w');
+end
 if isfield(LP,'stats')
     ind = find(LP.sweepAmps < 0);
 
@@ -18,17 +18,18 @@ if isfield(LP,'stats')
     if exist('y','var') && length(y)>1
         f = polyfit(x,y,1);
         resistance = f(1) * (10^3);
-
-        subplot(1,3,1)
-        hold on
-        plot(x,(f(1)*x+f(2))','k','LineWidth',1)
-        scatter(x,y,'r')
-        legend('off')
-        xlabel('input current (pA)')
-        ylabel('membrane potential (mV)')
-        title('V/I curve')
-        box off
-        axis tight
+        if params.plot_all == 1
+            subplot(1,3,1)
+            hold on
+            plot(x,(f(1)*x+f(2))','k','LineWidth',1)
+            scatter(x,y,'r')
+            legend('off')
+            xlabel('input current (pA)')
+            ylabel('membrane potential (mV)')
+            title('V/I curve')
+            box off
+            axis tight
+        end
     else
         resistance = NaN;
     end
@@ -48,18 +49,19 @@ if isfield(LP,'stats')
     if exist('y','var') && length(y)>1
         f = polyfit(x,y,1);
         tauMin = mean(y);
-
-        subplot(1,3,2)
-        hold on
-        plot(x,(f(1)*x+f(2))','k','LineWidth',1)
-        scatter(x,y,'r')
-        legend('off')
-        xlabel('input current (pA)')
-        ylabel('membrane potential (mV)')
-        title('tau (rest-to-min)')
-        box off
-        axis tight
-        ylim([0 100])
+        if params.plot_all == 1
+            subplot(1,3,2)
+            hold on
+            plot(x,(f(1)*x+f(2))','k','LineWidth',1)
+            scatter(x,y,'r')
+            legend('off')
+            xlabel('input current (pA)')
+            ylabel('membrane potential (mV)')
+            title('tau (rest-to-min)')
+            box off
+            axis tight
+            ylim([0 100])
+        end
     else
         tauMin = NaN;
     end
@@ -79,18 +81,19 @@ if isfield(LP,'stats')
     if exist('y','var') && length(y)>1
         tauSS = mean(y);
         f = polyfit(x,y,1);
-
-        subplot(1,3,3)
-        hold on
-        plot(x,(f(1)*x+f(2))','k','LineWidth',1)
-        scatter(x,y,'r')
-        legend('off')
-        xlabel('input current (pA)')
-        ylabel('membrane potential (mV)')
-        title('tau (min-to-steady)')
-        box off
-        axis tight
-    %     ylim([0 100])
+        if params.plot_all == 1
+            subplot(1,3,3)
+            hold on
+            plot(x,(f(1)*x+f(2))','k','LineWidth',1)
+            scatter(x,y,'r')
+            legend('off')
+            xlabel('input current (pA)')
+            ylabel('membrane potential (mV)')
+            title('tau (min-to-steady)')
+            box off
+            axis tight
+        %     ylim([0 100])
+        end
     else
         tauSS = NaN;
     end
@@ -103,6 +106,7 @@ else
     b.tauMin = NaN;
     b.tauSS = NaN;
 end
-
-export_fig([folder(1:length(folder)-8),cellID,' subthreshold summary'],'-pdf','-r100');
-close
+if params.plot_all == 1
+    export_fig([folder(1:length(folder)-8),cellID,' subthreshold summary'],'-pdf','-r100');
+    close
+end

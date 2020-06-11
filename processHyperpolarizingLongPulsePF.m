@@ -18,14 +18,16 @@ processHyperpolarizingLongPulse
 - finally analysis of rebound spikes
 %}
 
-figure('Position',[50 50 1100 250]); set(gcf,'color','w');
-hold on
+if params.plot_all == 1
+    figure('Position',[50 50 1100 250]); set(gcf,'color','w');
+    hold on
 
-plot(LP.V{1,k},'k')
-xlabel('time-steps')
-ylabel('voltage (mV)')
-axis tight
-box off
+    plot(LP.V{1,k},'k')
+    xlabel('time-steps')
+    ylabel('voltage (mV)')
+    axis tight
+    box off
+end
 
 subStats.subSweepID = k;
 subStats.subSweepAmps = LP.sweepAmps(k,1);
@@ -42,11 +44,15 @@ x = double(linspace(1,subStats.minVt-LP.stimOn(1,k),length(y))');
 if length(y)>=4
     [f,gof] = fit(x,y,'exp2');
     if gof.rsquare > 0.75          % Label NaN if rsquared < 0
-        plot(x+LP.stimOn(1,k),f(x),'r-.','LineWidth',2)
+        if params.plot_all == 1
+            plot(x+LP.stimOn(1,k),f(x),'r-.','LineWidth',2)
+        end
         temp = .63*(abs(f(1)-f(length(x))));
         vecin = find(f(1:length(x))<(f(1)-temp), 1, 'first');
         if ~isempty(vecin)
-            scatter(vecin(1)+1+LP.stimOn(1,k),LP.V{1,k}(LP.stimOn(1,k))-temp,'r','filled')
+            if params.plot_all == 1
+                scatter(vecin(1)+1+LP.stimOn(1,k),LP.V{1,k}(LP.stimOn(1,k))-temp,'r','filled')
+            end
             subStats.tauMin = vecin(1)*LP.acquireRes;
             subStats.tauMinamp = LP.sweepAmps(k,1);
             subStats.tauMinGF = 1;
@@ -69,11 +75,15 @@ x = double(linspace(1,LP.stimOff(1,k)-subStats.minVt,length(y))');
 if length(y)>=4
     [f,gof] = fit(x,y,'exp2');
     if gof.rsquare > 0.75          % Label NaN if rsquared < 0
-        plot(x+subStats.minVt,f(x),'b-.','LineWidth',2)
+        if params.plot_all == 1
+            plot(x+subStats.minVt,f(x),'b-.','LineWidth',2)
+        end
         temp = .63*(abs(f(1)-f(length(x))));
         vecin = find(f(1:length(x))>(f(1)+temp), 1, 'first');
         if ~isempty(vecin)
-            scatter(vecin(1)+1+subStats.minVt,LP.V{1,k}(subStats.minVt)+temp,'b','filled')
+            if params.plot_all == 1
+                scatter(vecin(1)+1+subStats.minVt,LP.V{1,k}(subStats.minVt)+temp,'b','filled')
+            end
             subStats.tauSS = vecin(1)*LP.acquireRes;
             subStats.tauSSamp = LP.sweepAmps(k,1);
             subStats.tauSSGF = 1;
@@ -85,8 +95,10 @@ if length(y)>=4
     end
 end
 
-plot((LP.stimOff(1,k)-round(50/LP.acquireRes):LP.stimOff(1,k)-1),...
-    LP.V{1,k}(LP.stimOff(1,k)-round(50/LP.acquireRes):LP.stimOff(1,k)-1),'g-.','LineWidth',2)
+if params.plot_all == 1
+    plot((LP.stimOff(1,k)-round(50/LP.acquireRes):LP.stimOff(1,k)-1),...
+        LP.V{1,k}(LP.stimOff(1,k)-round(50/LP.acquireRes):LP.stimOff(1,k)-1),'g-.','LineWidth',2)
+end
 
 % rebound slope
 [val,loc] = max(LP.V{1,k}(LP.stimOff(1,k):...
@@ -97,13 +109,15 @@ x = (loc:loc+round(params.reboundFitWindow/LP.acquireRes))-loc;
 subStats.reboundSlope = f(1);
 subStats.reboundDepolarization = abs(LP.V{1,k}(LP.stimOff(1,k)+loc)-...
     LP.V{1,k}(LP.stimOff(1,k)+loc+round(params.reboundFitWindow/LP.acquireRes)));
-plot(x+loc+LP.stimOff(1,k),(f(1)*x+f(2))','c-.','LineWidth',2)
-scatter(loc+LP.stimOff(1,k),val,'g','filled')
-scatter(round(params.reboundFitWindow/LP.acquireRes)+loc+LP.stimOff(1,k),mean(LP.V{1,k}(end-(3/LP.acquireRes):end)),'g','filled')
+if params.plot_all == 1
+    plot(x+loc+LP.stimOff(1,k),(f(1)*x+f(2))','c-.','LineWidth',2)
+    scatter(loc+LP.stimOff(1,k),val,'g','filled')
+    scatter(round(params.reboundFitWindow/LP.acquireRes)+loc+LP.stimOff(1,k),mean(LP.V{1,k}(end-(3/LP.acquireRes):end)),'g','filled')
 
-% save figure
-export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' hyperpolarizing parameters'],'-pdf','-r100');
-close
+    % save figure
+    export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' hyperpolarizing parameters'],'-pdf','-r100');
+    close
+end
 
 % rebound spikes
 reboundAPTimes = find(LP.V{1,k}(LP.stimOff(1,k):...

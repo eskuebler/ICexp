@@ -123,25 +123,31 @@ QCpeakNthreshold
 %}
 
 % events with low dV/dt
-diffthreshold2peak = abs(threshold-sp.peak);
+% diffthreshold2peak = abs(threshold-sp.peak);
 diffthreshold2peakT = (thresholdTime-sp.peakTime)/LP.acquireRes;
 
+% LP.qcRemovals.QCmatT2P = [(isnan(maxdVdt))',(threshold==0)',...
+%     (maxdVdt < params.mindVdt)',...
+%     (threshold > params.maxThreshold)',...
+%     (diffthreshold2peak < params.minDiffThreshold2Peak)',...
+%     (diffthreshold2peakT > params.maxDiffThreshold2PeakT)'];
 LP.qcRemovals.QCmatT2P = [(isnan(maxdVdt))',(threshold==0)',...
     (maxdVdt < params.mindVdt)',...
     (threshold > params.maxThreshold)',...
-    (diffthreshold2peak < params.minDiffThreshold2Peak)',...
     (diffthreshold2peakT > params.maxDiffThreshold2PeakT)'];
 
-figure('Position',[50 50 200 250]); set(gcf,'color','w');
-imagesc(LP.qcRemovals.QCmatT2P)
-colormap('gray')
-colorbar
-xticks(1:6)
-xticklabels({'interval','null dV/dt','dV/dt<5mV/ms','threshold>-20mV','t2p<20mV','t2pT>2ms'})
-xtickangle(45)
-ylabel('spike #')
-export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' spike QC'],'-pdf','-r100');
-close
+if params.plot_all == 1
+    figure('Position',[50 50 200 250]); set(gcf,'color','w');
+    imagesc(LP.qcRemovals.QCmatT2P)
+    colormap('gray')
+    colorbar
+    xticks(1:6)
+    xticklabels({'interval','null dV/dt','dV/dt<5mV/ms','threshold>-20mV','t2p<20mV','t2pT>2ms'})
+    xtickangle(45)
+    ylabel('spike #')
+    export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' spike QC'],'-pdf','-r100');
+    close
+end
 
 idx0 = find(isnan(maxdVdt));                                                % number of times interval rule is broken
 LP.qcRemovals.minInterval = LP.putSpTimes2(idx0);                           % record event times
@@ -179,15 +185,15 @@ thresholdTime(idx) = [];
 maxdVdt(idx) = [];
 maxdVdtTime(idx) = [];
 
-diffthreshold2peak = abs(threshold-sp.peak);
-idx2 = diffthreshold2peak < params.minDiffThreshold2Peak;
-LP.qcRemovals.diffthreshold2peak = LP.putSpTimes2(idx2);
-LP.putSpTimes2(idx2) = [];
-sp.peak(idx2) = []; sp.peakTime(idx2) = []; 
-threshold(idx2) = [];
-thresholdTime(idx2) = [];
-maxdVdt(idx2) = [];
-maxdVdtTime(idx2) = [];
+% diffthreshold2peak = abs(threshold-sp.peak);
+% idx2 = diffthreshold2peak < params.minDiffThreshold2Peak;
+% LP.qcRemovals.diffthreshold2peak = LP.putSpTimes2(idx2);
+% LP.putSpTimes2(idx2) = [];
+% sp.peak(idx2) = []; sp.peakTime(idx2) = []; 
+% threshold(idx2) = [];
+% thresholdTime(idx2) = [];
+% maxdVdt(idx2) = [];
+% maxdVdtTime(idx2) = [];
 
 diffthreshold2peakT = (thresholdTime-sp.peakTime)/LP.acquireRes;
 idx3 = diffthreshold2peakT > params.maxDiffThreshold2PeakT;

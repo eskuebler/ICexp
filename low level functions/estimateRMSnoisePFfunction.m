@@ -41,14 +41,16 @@ qc.logicVec = [qc.rmse_pre_st > params.RMSEst, ...
     qc.diffV_b_e > params.maxDiffBwBeginEnd, ...
     qc.restVPre > params.minimumRestingPot];
 
-figure('Position',[50 50 250 250]); set(gcf,'color','w');
-hold on
-plot(vec_pre)
-plot(vec_post)
-xlabel('time-steps')
-ylabel('voltage (mV)')
-axis tight
-ylim([-100 -30])
-legend({'pre-stim','post-stim'})
-export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' RMS noise vectors'],'-pdf','-r100');
-close
+if params.plot_all == 1
+    figure('Position',[50 50 250 250]); set(gcf,'color','w');
+    hold on
+    plot(vec_pre)
+    plot(vec_post)
+    xlabel('time-steps')
+    ylabel('voltage (mV)')
+    axis tight
+    ylim([-100 -30])
+    legend({'pre-stim','post-stim'})
+    export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' RMS noise vectors'],'-pdf','-r100');
+    close
+end

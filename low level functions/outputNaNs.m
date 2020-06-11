@@ -45,10 +45,15 @@ if isfield(LP,'qcRemovals')
     else
         supraStats.qcRemovals.maxThreshold = NaN;
     end
-    if isfield(LP.qcRemovals,'diffthreshold2peak')
-        supraStats.qcRemovals.diffthreshold2peak = LP.qcRemovals.diffthreshold2peak;
+    if isfield(LP.qcRemovals,'minDiffThreshold2PeakN')
+        supraStats.qcRemovals.minDiffThreshold2PeakN = LP.qcRemovals.minDiffThreshold2PeakN;
     else
-        supraStats.qcRemovals.diffthreshold2peak = NaN;
+        supraStats.qcRemovals.minDiffThreshold2PeakN = NaN;
+    end
+    if isfield(LP.qcRemovals,'minDiffThreshold2PeakB')
+        supraStats.qcRemovals.minDiffThreshold2PeakB = LP.qcRemovals.minDiffThreshold2PeakB;
+    else
+        supraStats.qcRemovals.minDiffThreshold2PeakB = NaN;
     end
     if isfield(LP.qcRemovals,'diffthreshold2peakT')
         supraStats.qcRemovals.diffthreshold2peakT = LP.qcRemovals.diffthreshold2peakT;
@@ -66,11 +71,11 @@ if isfield(LP,'qcRemovals')
     else
         supraStats.qcRemovals.dVdt0Re = NaN;
     end
-    if isfield(LP.qcRemovals,'diffpeak2trough')
-        supraStats.qcRemovals.diffpeak2trough = LP.qcRemovals.diffpeak2trough;
-    else
-        supraStats.qcRemovals.diffpeak2trough = NaN;
-    end
+%     if isfield(LP.qcRemovals,'diffpeak2trough')
+%         supraStats.qcRemovals.diffpeak2trough = LP.qcRemovals.diffpeak2trough;
+%     else
+%         supraStats.qcRemovals.diffpeak2trough = NaN;
+%     end
     if isfield(LP.qcRemovals,'minTrough')
         supraStats.qcRemovals.minTrough = LP.qcRemovals.minTrough;
     else
@@ -90,11 +95,12 @@ else
     supraStats.qcRemovals.dVdt0 = NaN;
     supraStats.qcRemovals.mindVdt = NaN;
     supraStats.qcRemovals.maxThreshold = NaN;
-    supraStats.qcRemovals.diffthreshold2peak = NaN;
+    supraStats.qcRemovals.diffthreshold2peakN = NaN;
+    supraStats.qcRemovals.diffthreshold2peakB = NaN;
     supraStats.qcRemovals.diffthreshold2peakT = NaN;
     supraStats.qcRemovals.minIntervalRe = NaN;
     supraStats.qcRemovals.dVdt0Re = NaN;
-    supraStats.qcRemovals.diffpeak2trough = NaN;
+%     supraStats.qcRemovals.diffpeak2trough = NaN;
     supraStats.qcRemovals.minTrough = NaN;
     supraStats.qcRemovals.percentRheobaseHeight = NaN;
 end

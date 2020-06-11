@@ -30,6 +30,7 @@ for m = 1:length(dataFolder)                                                % fo
         LPcount = 1; SPcount = 1;
         for k = 1:length(fileList)
             exten = fileList(k,1).name(end-2:end);
+            %% meagan diff protocol names for long pulse
             if sum(exten == 'abf')==3
                 getSweepsABF
             elseif sum(exten == 'nwb')==3

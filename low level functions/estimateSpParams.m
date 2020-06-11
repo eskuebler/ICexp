@@ -102,6 +102,59 @@ else
     LP.qcRemovals.percentRheobaseHeight = NaN;
 end
 
+
+if sum((fast_trough_dur * LP.acquireRes) <= 3) > 0        % narrow spiking
+    idx = abs(sp.peak-sp.thresholdRef)<params.minDiffThreshold2PeakN;
+    LP.qcRemovals.minDiffThreshold2PeakN = LP.putSpTimes2(idx);
+    LP.qcRemovals.QCmatminDiffThreshold2PeakN = heightPT < ...
+        params.percentRheobaseHeight * heightPT(1);
+    LP.putSpTimes2(idx) = [];
+    sp.peak(idx) = []; sp.peakTime(idx) = []; 
+    sp.trough(idx) = []; sp.troughTime(idx) = [];
+    sp.thresholdRef(idx) = [];
+    sp.thresholdRefTime(idx) = [];
+    sp.threshold(idx) = [];
+    sp.thresholdTime(idx) = [];
+    sp.maxdVdt(idx) = [];
+    sp.maxdVdtTime(idx) = [];
+    heightPT(idx) = [];
+    fullWidthPT(idx) = [];
+    heightTP(idx) = [];
+    fullWidthTP(idx) = [];
+    peakUpStroke(idx) = [];
+    peakDownStroke(idx) = [];
+    peakStrokeRatio(idx) = [];
+    fast_trough(idx) = [];
+    fast_trough_dur(idx) = [];
+    slow_trough(idx) = [];
+    slow_trough_dur(idx) = [];
+else                                                        % broad spiking
+    idx = abs(sp.peak-sp.thresholdRef)<params.minDiffThreshold2PeakB;
+    LP.qcRemovals.minDiffThreshold2PeakB = LP.putSpTimes2(idx);
+    LP.qcRemovals.QCmatminDiffThreshold2PeakB = heightPT < ...
+        params.percentRheobaseHeight * heightPT(1);
+    LP.putSpTimes2(idx) = [];
+    sp.peak(idx) = []; sp.peakTime(idx) = []; 
+    sp.trough(idx) = []; sp.troughTime(idx) = [];
+    sp.thresholdRef(idx) = [];
+    sp.thresholdRefTime(idx) = [];
+    sp.threshold(idx) = [];
+    sp.thresholdTime(idx) = [];
+    sp.maxdVdt(idx) = [];
+    sp.maxdVdtTime(idx) = [];
+    heightPT(idx) = [];
+    fullWidthPT(idx) = [];
+    heightTP(idx) = [];
+    fullWidthTP(idx) = [];
+    peakUpStroke(idx) = [];
+    peakDownStroke(idx) = [];
+    peakStrokeRatio(idx) = [];
+    fast_trough(idx) = [];
+    fast_trough_dur(idx) = [];
+    slow_trough(idx) = [];
+    slow_trough_dur(idx) = [];
+end
+
 sp.heightPT = heightPT;
 sp.halfHeightTimeUpPT = halfHeightTimeUpPT;
 sp.halfHeightTimeDownPT = halfHeightTimeDownPT;

@@ -1,4 +1,4 @@
-function [LP] = betweenSweepVmQC(LP,cellID,folder)
+function [LP] = betweenSweepVmQC(LP,cellID,folder,params)
 %{
 betweenSweepVmQC
 %}
@@ -9,15 +9,17 @@ end
 
 LP.rmp = rmp;
 
-figure('Position',[50 50 300 250]); set(gcf,'color','w');
-plot(LP.rmp')
-xlabel('sweep #')
-ylabel('resting membrane potential (mV)')
-legend({'pre-stim','post-stim'})
-box off
-axis tight
-ylim([-80 -40])
+if params.plot_all == 1
+    figure('Position',[50 50 300 250]); set(gcf,'color','w');
+    plot(LP.rmp')
+    xlabel('sweep #')
+    ylabel('resting membrane potential (mV)')
+    legend({'pre-stim','post-stim'})
+    box off
+    axis tight
+    ylim([-80 -40])
 
-% save figure
-export_fig([folder(1:length(folder)-8),cellID,' rmp'],'-pdf','-r100');
-close
+    % save figure
+    export_fig([folder(1:length(folder)-8),cellID,' rmp'],'-pdf','-r100');
+    close
+end

@@ -1,4 +1,4 @@
-function LP = getSPdVdt(LP,k,thresholdDVDT,cellID,folder)
+function LP = getSPdVdt(LP,k,thresholdDVDT,cellID,folder,params)
 
 %{
 getSPdVdt
@@ -24,24 +24,26 @@ x = single(x);
 
 dVdt = diff(x)/(1000/5e4);              % dV/dt at 50 kHz
 
-figure('Position',[50 50 600 400]); set(gcf,'color','w');
-subplot(2,1,1)
-plot(x,'k')
-xlabel('time')
-ylabel('voltage (mV)')
-axis tight
-box off
-subplot(2,1,2)
-hold on
-plot([1 length(dVdt)],[thresholdDVDT,thresholdDVDT],'r')
-plot(dVdt,'k')
-xlabel('time')
-ylabel('dV/dt (mV/ms)')
-axis tight
-ylim([0 30])
-box off
-export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' no spikes'],'-pdf','-r100');
-close
+if params.plot_all == 1
+    figure('Position',[50 50 600 400]); set(gcf,'color','w');
+    subplot(2,1,1)
+    plot(x,'k')
+    xlabel('time')
+    ylabel('voltage (mV)')
+    axis tight
+    box off
+    subplot(2,1,2)
+    hold on
+    plot([1 length(dVdt)],[thresholdDVDT,thresholdDVDT],'r')
+    plot(dVdt,'k')
+    xlabel('time')
+    ylabel('dV/dt (mV/ms)')
+    axis tight
+    ylim([0 30])
+    box off
+    export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' no spikes'],'-pdf','-r100');
+    close
+end
 
 % tempSP = find(dVdt > (20/LP.acquireRes));
 % c = 1;
