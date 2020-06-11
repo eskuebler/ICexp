@@ -32,38 +32,17 @@ if isfield(a.LP.stats{k,1},'qcRemovals') && ...
 %             a.LP.stats{k,1}.qcRemovals.QCmatTrough, ...
 %             a.LP.stats{k,1}.qcRemovals.percentRheobaseHeight])
 %     else
-        a_orig = size(a.LP.stats{k,1}.qcRemovals.QCmatT2P,1);
         if sum(sum(a.LP.stats{k,1}.qcRemovals.QCmatT2PRe))==0
             a.LP.stats{k,1}.qcRemovals.QCmatT2PRe = ...
-                zeros(a_orig, ...
-                size(a.LP.stats{k,1}.qcRemovals.QCmatT2PRe,2));             % setting this vector to zeros (frustratingly necessary
+                zeros(size(a.LP.stats{k,1}.qcRemovals.QCmatT2P,1),1);       % setting this vector to zeros (frustratingly necessary
         else
-            [b,c] = size(a.LP.stats{k,1}.qcRemovals.QCmatT2PRe);
-            if a_orig - b > 0
-                a.LP.stats{k,1}.qcRemovals.QCmatT2PRe(b + 1: ...
-                    a_orig,1:c) = zeros(a_orig - b,c);
-            end
+            'yo'
         end
-        if sum(sum(a.LP.stats{k,1}.qcRemovals.QCmatTrough))==0
-            a.LP.stats{k,1}.qcRemovals.QCmatTrough = ...
-                zeros(a_orig, ...
-                size(a.LP.stats{k,1}.qcRemovals.QCmatTrough,2));             % setting this vector to zeros (frustratingly necessary
-        else
-            [b,c] = size(a.LP.stats{k,1}.qcRemovals.QCmatTrough);
-            if a_orig - b > 0
-                a.LP.stats{k,1}.qcRemovals.QCmatTrough(b + 1: ...
-                    a_orig,1:c) = zeros(a_orig - b,c);
-            end
-        end
-        if sum(a.LP.stats{k,1}.qcRemovals.QCmatpercentRheobaseHeight)==0
+        if a.LP.stats{k,1}.qcRemovals.percentRheobaseHeight==0
             a.LP.stats{k,1}.qcRemovals.QCmatpercentRheobaseHeight = ...
                 zeros(size(a.LP.stats{k,1}.qcRemovals.QCmatT2P,1),1);       % setting this vector to zeros (frustratingly necessary
         else
-            [b,c] = size(a.LP.stats{k,1}.qcRemovals.QCmatpercentRheobaseHeight);
-            if a_orig - b > 0
-                a.LP.stats{k,1}.qcRemovals.QCmatpercentRheobaseHeight(1:c, ...
-                    b + 1: a_orig) = zeros(c,a_orig - b);
-            end
+            'yo'
         end
         imagesc([a.LP.stats{k,1}.qcRemovals.QCmatT2P, ...
             a.LP.stats{k,1}.qcRemovals.QCmatT2PRe, ...
@@ -71,14 +50,14 @@ if isfield(a.LP.stats{k,1},'qcRemovals') && ...
             a.LP.stats{k,1}.qcRemovals.QCmatpercentRheobaseHeight])
 %     end
     colormap('gray')
+    colorbar
     xticks(1:11)
     xticklabels({'interval','null dV/dt','dV/dt<5mV/ms', ...
         'threshold>-20mV','t2p<20mV','t2pT>2ms','interval Re', ...
         'null dV/dt Re','p2t<30mV','trough>-30mV','<30% Rheobase height'})
     xtickangle(45)
     ylabel('spike #')
-    title([int2str(a.LP.sweepAmps(k,1)),' pA'])
-    export_fig(['D:\my\genpath\',cellID,' ',int2str(k),' spike QC matrix'],'-pdf','-r100');
+%     export_fig(['D:\my\genpath\',cellID,' ',int2str(k),' suprathreshold spike QC'],'-pdf','-r100');
     close
 
     %{

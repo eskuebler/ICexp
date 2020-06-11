@@ -2,28 +2,98 @@ function supraStats = outputNaNs(LP,k)
 
 % store spike-wise QC
 if isfield(LP,'qcRemovals')
+    % spike wise QC matrices
+    if isfield(LP.qcRemovals,'QCmatT2P')
+        supraStats.qcRemovals.QCmatT2P = LP.qcRemovals.QCmatT2P;
+    else
+        supraStats.qcRemovals.QCmatT2P = NaN;
+    end
+    if isfield(LP.qcRemovals,'QCmatT2PRe')
+        supraStats.qcRemovals.QCmatT2PRe = LP.qcRemovals.QCmatT2PRe;
+    else
+        supraStats.qcRemovals.QCmatT2PRe = NaN;
+    end
+    if isfield(LP.qcRemovals,'QCmatTrough')
+        supraStats.qcRemovals.QCmatTrough = LP.qcRemovals.QCmatTrough;
+    else
+        supraStats.qcRemovals.QCmatTrough = NaN;
+    end
+    if isfield(LP.qcRemovals,'QCmatpercentRheobaseHeight')
+        supraStats.qcRemovals.QCmatpercentRheobaseHeight = ...
+            LP.qcRemovals.QCmatpercentRheobaseHeight;
+    else
+        supraStats.qcRemovals.QCmatpercentRheobaseHeight = NaN;
+    end
+    % spike-wsie QC parameters
+    if isfield(LP.qcRemovals,'minInterval')
+        supraStats.qcRemovals.minInterval = LP.qcRemovals.minInterval;
+    else
+        supraStats.qcRemovals.minInterval = NaN;
+    end
+    if isfield(LP.qcRemovals,'dVdt0')
+        supraStats.qcRemovals.dVdt0 = LP.qcRemovals.dVdt0;
+    else
+        supraStats.qcRemovals.dVdt0 = NaN;
+    end
+    if isfield(LP.qcRemovals,'mindVdt')
+        supraStats.qcRemovals.mindVdt = LP.qcRemovals.mindVdt;
+    else
+        supraStats.qcRemovals.mindVdt = NaN;
+    end
     if isfield(LP.qcRemovals,'maxThreshold')
         supraStats.qcRemovals.maxThreshold = LP.qcRemovals.maxThreshold;
+    else
+        supraStats.qcRemovals.maxThreshold = NaN;
     end
     if isfield(LP.qcRemovals,'diffthreshold2peak')
         supraStats.qcRemovals.diffthreshold2peak = LP.qcRemovals.diffthreshold2peak;
+    else
+        supraStats.qcRemovals.diffthreshold2peak = NaN;
     end
     if isfield(LP.qcRemovals,'diffthreshold2peakT')
         supraStats.qcRemovals.diffthreshold2peakT = LP.qcRemovals.diffthreshold2peakT;
+    else
+        supraStats.qcRemovals.diffthreshold2peakT = NaN;
+    end
+    
+    if isfield(LP.qcRemovals,'minIntervalRe')
+        supraStats.qcRemovals.minIntervalRe = LP.qcRemovals.minIntervalRe;
+    else
+        supraStats.qcRemovals.minIntervalRe = NaN;
+    end
+    if isfield(LP.qcRemovals,'dVdt0Re')
+        supraStats.qcRemovals.dVdt0Re = LP.qcRemovals.dVdt0Re;
+    else
+        supraStats.qcRemovals.dVdt0Re = NaN;
     end
     if isfield(LP.qcRemovals,'diffpeak2trough')
         supraStats.qcRemovals.diffpeak2trough = LP.qcRemovals.diffpeak2trough;
+    else
+        supraStats.qcRemovals.diffpeak2trough = NaN;
     end
     if isfield(LP.qcRemovals,'minTrough')
         supraStats.qcRemovals.minTrough = LP.qcRemovals.minTrough;
+    else
+        supraStats.qcRemovals.minTrough = NaN;
     end
     if isfield(LP.qcRemovals,'percentRheobaseHeight')
-        supraStats.qcRemovals.maxThreshold = LP.qcRemovals.percentRheobaseHeight;
+        supraStats.qcRemovals.percentRheobaseHeight = LP.qcRemovals.percentRheobaseHeight;
+    else
+        supraStats.qcRemovals.percentRheobaseHeight = NaN;
     end
 else
+    supraStats.qcRemovals.QCmatT2P = NaN;
+    supraStats.qcRemovals.QCmatT2PRe = NaN;
+    supraStats.qcRemovals.QCmatTrough = NaN;
+    supraStats.qcRemovals.QCmatpercentRheobaseHeight = NaN;
+    supraStats.qcRemovals.minInterval = NaN;
+    supraStats.qcRemovals.dVdt0 = NaN;
+    supraStats.qcRemovals.mindVdt = NaN;
     supraStats.qcRemovals.maxThreshold = NaN;
     supraStats.qcRemovals.diffthreshold2peak = NaN;
     supraStats.qcRemovals.diffthreshold2peakT = NaN;
+    supraStats.qcRemovals.minIntervalRe = NaN;
+    supraStats.qcRemovals.dVdt0Re = NaN;
     supraStats.qcRemovals.diffpeak2trough = NaN;
     supraStats.qcRemovals.minTrough = NaN;
     supraStats.qcRemovals.percentRheobaseHeight = NaN;

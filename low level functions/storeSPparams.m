@@ -12,13 +12,13 @@ supraStats.qcRemovals.maxThreshold = LP.qcRemovals.maxThreshold;
 supraStats.qcRemovals.diffthreshold2peak = LP.qcRemovals.diffthreshold2peak;
 supraStats.qcRemovals.diffthreshold2peakT = LP.qcRemovals.diffthreshold2peakT;
 supraStats.qcRemovals.QCmatT2PRe = LP.qcRemovals.QCmatT2PRe;
-supraStats.qcRemovals.minIntervalRe = LP.qcRemovals.minIntervalre;
-supraStats.qcRemovals.dVdt0Re = LP.qcRemovals.dVdt0re;
+supraStats.qcRemovals.minIntervalRe = LP.qcRemovals.minIntervalRe;
+supraStats.qcRemovals.dVdt0Re = LP.qcRemovals.dVdt0Re;
 supraStats.qcRemovals.QCmatTrough = LP.qcRemovals.QCmatTrough;
 supraStats.qcRemovals.diffpeak2trough = LP.qcRemovals.diffpeak2trough;
 supraStats.qcRemovals.minTrough = LP.qcRemovals.minTrough;
-supraStats.qcRemovals.diffpeak2trough = LP.qcRemovals.diffpeak2trough;
 supraStats.qcRemovals.percentRheobaseHeight = LP.qcRemovals.percentRheobaseHeight;
+supraStats.qcRemovals.QCmatpercentRheobaseHeight = LP.qcRemovals.QCmatpercentRheobaseHeight;
 
 supraStats.spTimes = LP.putSpTimes2;
 supraStats.peak = sp.peak; 

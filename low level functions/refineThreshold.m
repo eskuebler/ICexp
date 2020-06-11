@@ -102,7 +102,7 @@ end
 LP.qcRemovals.QCmatT2PRe = [(isnan(thresholdRef))',(thresholdRef==0)'];
 
 idx0 = find(isnan(thresholdRef));                                                % number of times interval rule is broken
-LP.qcRemovals.minIntervalre = LP.putSpTimes2(idx0);                           % record event times
+LP.qcRemovals.minIntervalRe = LP.putSpTimes2(idx0);                           % record event times
 LP.putSpTimes2(idx0) = [];
 sp.peak(idx0) = []; sp.peakTime(idx0) = [];
 sp.threshold(idx0) = [];
@@ -113,7 +113,7 @@ thresholdRefTime(idx0) = [];
 thresholdRef(idx0) = [];
 
 idx00 = thresholdRef==0;                                                % number of times dV/dt rule is broken
-LP.qcRemovals.dVdt0re = LP.putSpTimes2(idx00);                           % record event times
+LP.qcRemovals.dVdt0Re = LP.putSpTimes2(idx00);                           % record event times
 LP.putSpTimes2(idx00) = [];
 sp.peak(idx00) = []; sp.peakTime(idx00) = [];
 sp.threshold(idx00) = [];

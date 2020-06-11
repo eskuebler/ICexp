@@ -75,8 +75,6 @@ halfHeightTimeDownTP(isnan(halfHeightTimeDownTP)) = [];
 if length(heightPT)>1
     idx = heightPT<params.percentRheobaseHeight*heightPT(1);
     LP.qcRemovals.percentRheobaseHeight = LP.putSpTimes2(idx);
-    LP.qcRemovals.QCmatpercentRheobaseHeight = heightPT < ...
-        params.percentRheobaseHeight * heightPT(1);
     LP.putSpTimes2(idx) = [];
     sp.peak(idx) = []; sp.peakTime(idx) = []; 
     sp.trough(idx) = []; sp.troughTime(idx) = [];
@@ -98,8 +96,7 @@ if length(heightPT)>1
     slow_trough(idx) = [];
     slow_trough_dur(idx) = [];
 else
-    LP.qcRemovals.QCmatpercentRheobaseHeight = zeros(length(LP.putSpTimes2),1);
-    LP.qcRemovals.percentRheobaseHeight = NaN;
+    LP.qcRemovals.percentRheobaseHeight = zeros(size(LP.putSpTimes2),1);
 end
 
 sp.heightPT = heightPT;

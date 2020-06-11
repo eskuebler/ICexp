@@ -14,8 +14,8 @@ origStdThresMax = 3;                                                        % ab
 origStdThresMin = 0.7;                                                      % below this threshold cells are not QC'd sweep-wise any further
 
 % summary file names
-savefilename = 'cell type details (2020 05 19)';                            % main data file name
-savefilenameInd = 'cell type details (2020 05 19) sp qc';                   % single cells file name (cell ID added below in loop)
+savefilename = 'cell type details (2020 06 08)';                            % main data file name
+savefilenameInd = 'cell type details (2020 06 08) sp qc';                   % single cells file name (cell ID added below in loop)
 % savefilenameIndBin = 'cell type details (2020 05 19) sp qc binary';         
 
 % load data
@@ -184,28 +184,9 @@ for n = 1:length(cellList)                                                  % fo
     if size(qc_class_mat,1)~=n
         qc_class_mat(n,:) = 0;
     end
-    
-    if exist('input_current_spqc','var')                                    % save csv files for spike-wise QC
-        T = table(input_current_spqc,spqcmatnbinary);
-        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID,...
-            '.xlsx'],'Sheet','Sheet1','WriteRowNames',true)
-        T = table(input_current_spqc,spqcmatnbinaryid);
-        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID,...
-            '.xlsx'],'Sheet','Sheet2','WriteRowNames',true)
-        T = table(input_current_spqc,spqcvectag);
-        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID, ...
-            '.xlsx'],'Sheet','Sheet3','WriteRowNames',true)
-        T = table(input_current_spqc,spqcmatn);
-        writetable(T,[mainFolder,'genpath\',savefilenameInd,' ',cellID, ...
-            '.xlsx'],'Sheet','Sheet4','WriteRowNames',true)
-        clear input_current_spqc spqcmatnbinary spqcmatnbinaryid
-    end
-    
+
     if size(sweepBinary,1)==n && sum(sweepBinary(n,:))>0
-                
-%         if n == 294
-%            'YO' 
-%         end
+        
         % subthreshold summary parameters
         acquireRes(n,1) = double(a.LP.acquireRes);
         resistance(n,1) = round(double(a.LP.subSummary.resistance),2);

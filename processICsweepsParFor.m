@@ -17,6 +17,8 @@ parfor n = 1:length(cellList)                                               % fo
             qc = estimateRMSnoisePFfunction(a.LP,k,params,cellID,folder);   % RMS noise measurements (for QC)
             if sum(qc.logicVec) == 0                                        % if sweep passes QC criteria
                 if a.LP.sweepAmps(k,1) > 0                                  % if current input > 0
+                    %% meagan diff protocol names for long pulse
+                    
                     a.LP.stats{k,1} = processDepolarizingLongPulsePF...
                         (a.LP,params,k,cellID,folder);                      % depolarizing stimulus analysis
                     a.LP.stats{k,1}.qc = qc;                                % add RMS values to data structure
