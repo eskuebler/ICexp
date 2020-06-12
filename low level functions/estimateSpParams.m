@@ -103,7 +103,7 @@ else
 end
 
 
-if sum((fast_trough_dur * LP.acquireRes) <= 3) > 0        % narrow spiking
+if sum(fullWidthTP <= 0.7) > 0        % narrow spiking
     idx = abs(sp.peak-sp.thresholdRef)<params.minDiffThreshold2PeakN;
     LP.qcRemovals.minDiffThreshold2PeakN = LP.putSpTimes2(idx);
     LP.qcRemovals.QCmatminDiffThreshold2PeakN = heightPT < ...

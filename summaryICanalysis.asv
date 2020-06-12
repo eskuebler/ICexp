@@ -112,7 +112,7 @@ for n = 1:281%length(cellList)                                                  
         qc_V_vecDelta(n,1:length(a.LP.rmp(1,:))) = ...
             round(a.LP.rmp(1,1) - a.LP.rmp(1,:),2);                         % diff RMP pre and post stimulus
         spqcmatn = zeros(length(a.LP.sweepAmps),10);                        % initialize count of QC removals matrix (each column is a criteria)
-        binaryMatCount = 1;
+        spqcmatnbinary = nan(20,300); spqcmatnbinaryid = nan(20,300);       % initialize spike-wise QC matrix
         spqcvectag = nan(20,300);                                           % initialize QC tag storage
         input_current_spqc = zeros(20,1);                                   % initialize input current storage
         for k = 1:length(a.LP.sweepAmps)                                    % for each sweep
@@ -148,7 +148,6 @@ for n = 1:281%length(cellList)                                                  
         if sum(sum(spqcmatn))>0                                             % figure of spike-wise QC (sweeps X criteria)
             figure('Position',[50 50 300 250]); set(gcf,'color','w');
             imagesc(spqcmatn)
-            colorbar
             colormap('gray')
             xticks(1:10)
             xticklabels({'interval','null dV/dt','dV/dt<5mV/ms', ...
@@ -158,16 +157,15 @@ for n = 1:281%length(cellList)                                                  
             ylabel('sweep #')
             export_fig(['D:\my\genpath\',cellID,' spike QC (sweeps by critiera)'],'-pdf','-r100');
             close
-        end 
-        if exist('spqcmatnbinaryid','var')
+            
+            
             figure('Position',[50 50 300 250]); set(gcf,'color','w');
-            imagesc(spqcmatnbinaryid)
+            imagesc(spqcmatnbinaryid(:,))
             colormap('gray')
-            xlabel('spike # (white==passes QC)')
-            ylabel('sweep # (only sweeps w removed sp)')
-            export_fig(['D:\my\genpath\',cellID,' spike QC (sweeps by spike binary)'],'-pdf','-r100');
+            xlabel('spike #')
+            ylabel('sweep #')
+            export_fig(['D:\my\genpath\',cellID,' spike QC (sweeps by spike binrary)'],'-pdf','-r100');
             close
-            clear spqcmatnbinaryid spqcmatnbinary
         end
         % add sp qc
         qc_logic_mat(n,1:6) = qc_logic;
