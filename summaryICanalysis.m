@@ -6,7 +6,7 @@ clear; close all; clc;                                                      % pr
 
 % list of cells
 mainFolder = 'D:\my\';                                                      % main folder for data (EDIT HERE)
-cellList = dir([mainFolder,'genpath\*.mat']);                                 % cell list
+cellList = dir([mainFolder,'genpath\*.mat']);                               % cell list
     
 % free parameters (across sweep QC)
 minNmaxThres = 10;                                                          % threshold for difference b/w min and max voltage
@@ -14,11 +14,11 @@ origStdThresMax = 3;                                                        % ab
 origStdThresMin = 0.7;                                                      % below this threshold cells are not QC'd sweep-wise any further
 
 % summary file names
-savefilename = 'cell type details (2020 06 08)';                            % main data file name
-savefilenameInd = 'cell type details (2020 06 08) sp qc';                   % single cells file name (cell ID added below in loop)      
+% savefilename = 'cell type details (2020 06 08)';                            % main data file name
+% savefilenameInd = 'cell type details (2020 06 08) sp qc';                   % single cells file name (cell ID added below in loop)      
 
 % load data
-load('dendrite_layer.mat')                                                  % load Michelle's NHP data
+load('manual_entry_data.mat')                                               % load Michelle's NHP data
 layerID = ID; dendrite_typeMJ = dendrite_type; clear ID dendrite_type       % adjust variable names for overlap
 load('pyramidal cell IDs.mat')                                              % load Michelle's pyramidal cells
 pyrID = ID; clear ID                                                        % adjust variable names for overlap
@@ -83,15 +83,15 @@ for n = 1:281%length(cellList)                                                  
         IC.pyramidalID(n,1) = NaN;
         if sum(ismember(layerID,cellID))
             k = find(ismember(layerID,cellID)==1);
-            if AccesResistance(k,1) ~= 'N/A'
-                IC.access_resistance(n,1) = ...
-                    str2num(char(AccesResistance(k,1)));
-            end
+%             if AccesResistance(k,1) ~= 'N/A'                              
+%                 IC.access_resistance(n,1) = ...
+%                     str2num(char(AccesResistance(k,1)));
+%             end
             IC.dendrite_type(n,1) = dendrite_typeMJ(k,1);
             IC.cortical_layer(n,1) = Layer(k,1);
-            if Temperature(k,1) ~= 'N/A'
-                IC.temperature(n,1) = str2num(char(Temperature(k,1)));
-            end
+%             if Temperature(k,1) ~= 'N/A'
+%                 IC.temperature(n,1) = str2num(char(Temperature(k,1)));
+%             end
         else
             IC.access_resistance(n,1) = NaN;
             IC.dendrite_type(n,1) = categorical(cellstr('N/A'));
@@ -196,7 +196,7 @@ for n = 1:281%length(cellList)                                                  
         if a.LP.fullStruct == 1
             k = find(ismember(sweepID(n,:),...
                 find(round(double(a.LP.sweepAmps)) == -90))==1);            % find -90 pA input
-            if length(k)>1
+            if length(k)>1  
                 k = k(1);
             end
             if ~isempty(k)
@@ -356,7 +356,6 @@ clear cell_reporter_status donor__species line_name specimen__id structure__acro
     structure__layer tag__dendrite_type
 
 % Cleaning up variables 
-
 IC.resistance_ss(IC.resistance_ss==0)= NaN;                                 % 0 is a non-sensical value in most variables and should be NaN
 IC.resistance_hd(IC.resistance_hd==0)= NaN;
 IC.time_constant(IC.time_constant==0)= NaN;
