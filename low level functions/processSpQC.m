@@ -194,13 +194,17 @@ if isfield(a.LP.stats{k,1},'qcRemovals') && ...
         [~,I] = sort(sp); spid = spid(I);                                   % sort the good and bad spike tags
         spqcmatnbinary(binaryMatCount,1:length(sp)) = sp;                   % store spike times
         spqcmatnbinaryid(binaryMatCount,1:length(spid)) = spid;             % store tags
+        k_len_spID(binaryMatCount,1) = round(double(a.LP.sweepAmps(k,1)));
         binaryMatCount = binaryMatCount + 1;
-%         k_len_spID(k,1) = length(spid);
         
         figure('Position',[50 50 300 250]); set(gcf,'color','w');
-        bar(spid,'k')
+        hold on
+        spTimes = find(spid==1);
+        plot([spTimes;spTimes],[zeros(1,length(spTimes));ones(1,length(spTimes))],'k','linewidth',0.25)
+        spTimes = find(spid==0);
+        plot([spTimes;spTimes],[zeros(1,length(spTimes));ones(1,length(spTimes))],'r','linewidth',0.25)
         xlabel('spike number')
-        ylabel('binary 1 = passes QC')
+        ylabel('blk=pass,red=removed')
         box off
         xlim([0.5 length(spid)+0.5])
         ylim([0 1.1])
