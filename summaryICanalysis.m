@@ -15,8 +15,7 @@ origStdThresMin = 0.7;                                                      % be
 
 % summary file names
 savefilename = 'cell type details (2020 06 08)';                            % main data file name
-savefilenameInd = 'cell type details (2020 06 08) sp qc';                   % single cells file name (cell ID added below in loop)
-% savefilenameIndBin = 'cell type details (2020 05 19) sp qc binary';         
+savefilenameInd = 'cell type details (2020 06 08) sp qc';                   % single cells file name (cell ID added below in loop)      
 
 % load data
 load('dendrite_layer.mat')                                                  % load Michelle's NHP data
@@ -39,8 +38,7 @@ for n = 1:281%length(cellList)                                                  
     clc; disp(n)                                                            % display n value
     sweepIDcount = 1;
     
-    % Determining the from which institution the cell was obtained and assigning their matadata and control parameters
-    
+    % Determine from which institution the cell was obtained and assigning their matadata and control parameters
     if length(cellList(n).name) == 17
         cellID = cellList(n).name(1:length(cellList(n).name)-4);            % JMT lab ID
     else
@@ -164,7 +162,7 @@ for n = 1:281%length(cellList)                                                  
             export_fig(['D:\my\genpath\',cellID,' spike QC (sweeps by critiera)'],'-pdf','-r100');
             close
         end 
-        if exist('spqcmatnbinaryid','var')
+        if exist('spqcmatnbinaryid','var')                                  % figure of spike-wise QC (sweeps X spikes)
             figure('Position',[50 50 300 250]); set(gcf,'color','w');
             imagesc(spqcmatnbinaryid)
             box off
@@ -175,7 +173,7 @@ for n = 1:281%length(cellList)                                                  
             yticklabels({k_len_spID})
             export_fig(['D:\my\genpath\',cellID,' spike QC (sweeps by spike binary)'],'-pdf','-r100');
             close
-            clear spqcmatnbinaryid spqcmatnbinary
+            clear spqcmatnbinaryid spqcmatnbinary k_len_spID
         end
         % add sp qc
         qc_logic_mat(n,1:6) = qc_logic;
@@ -189,7 +187,7 @@ for n = 1:281%length(cellList)                                                  
         
         % subthreshold summary parameters
         IC.acquireRes(n,1) = double(a.LP.acquireRes);
-        IC.resistance(n,1) = round(double(a.LP.subSummary.resistance),2);
+        IC.resistance(n,1) = round(double(a.LP.subSummary.resistance),2);   % Allen Method
         IC.resistance_hd(n,1) = resistance_hd(a.LP);                        % resistance (HD?)
         IC.resistance_ss(n,1) = resistance_ss(a.LP);                        % resistance based on steady state
         IC.Vrest(n,1) = restingMP(a.LP);                                    % resting membrane potential
@@ -281,6 +279,12 @@ for n = 1:281%length(cellList)                                                  
                     IC.trough(n,1) = round(double(a.LP.stats{idx(k),1}.trough(1)),2);
                     IC.fastTrough(n,1) = a.LP.stats{idx(k),1}.fastTroughDur(1);
                     IC.slowTrough(n,1) = a.LP.stats{idx(k),1}.slowTroughDur(1);
+                    if IC.slowTrough(n,1) < 2                               %  check if the cell has a true fAHP, its peak should be more depolarized than any other afterhyperpolarizations                         
+                        IC.fAHPamp(n,1) = IC.thresholdLP(n,1) - ...
+                            IC.trough(n,1);                                 %  amplitude of fAHP from threshold
+                    else 
+                        IC.fAHPamp(n,1) = NaN;
+                    end
                     if size(a.LP.stats{idx(k),1}.waves,1) > 1
                         wf(n,:) = round(mean(a.LP.stats{idx(k),1}.waves),2);
                     else
@@ -291,12 +295,89 @@ for n = 1:281%length(cellList)                                                  
                     IC.rheobaseLP(n,1) = NaN;
                 end
             end
+            
+            % global spiketrain parameters
             IC.maxFiringRate(n,1) = max(IC.firing_rate_s(n,:));
-
-            clear B I idx amp temp k
+            IC.mdn_insta_freq(n,1) = median_isi(a.LP);                      % obtain the median ISI of all suprathreshold sweeps
+          
+            % picking "Hero sweep" for more spike train parameters per cell
+            k = [];                                                         % resetting k for indexing sweeps
+            flag = 0;                                                       % variable to fire the if condition in while loop only one time
+            if length(IC.rheobaseLP) == n 
+                [~,k] = min(abs(double(B)-(IC.rheobaseLP(n,1)*1.5)));       % hero sweep is 1.5x Rheobase
+                if k > 0                                                    % if there is a sweep 1.5x Rheobase
+                    while sum(ismember(sweepID(n,:), k)) == 0 ||       ...
+                            isfield(a.LP.stats{k,1},'burst') == 0 ||   ...
+                            IC.firing_rate_s(n,k) == 0 ||              ...
+                            a.LP.sweepAmps(k) <= IC.rheobaseLP(n,1) || ...
+                            a.LP.sweepAmps(k) > 2*IC.rheobaseLP(n,1)        % conditions (i.e., )
+                        k = k - 1;  
+                        if k == 0 && flag == 0
+                            [~, k] = min(abs(double(B) - ...
+                                (IC.rheobaseLP(n,1)*8)));                   % hero sweep is 8x Rheobase sweep
+                            flag = 1;                                       % set if condition to fire
+                        end
+                        if k == 0 && flag == 1; break; end
+                    end  
+                end
+                if k == 0 
+                    IC.firing_rate_s_hero(n,1) = NaN;
+                    IC.burst_hero(n,1) = NaN;
+                    IC.delay_hero(n,1) =   NaN;
+                    IC.latency_hero(n,1) = NaN;
+                    IC.cv_ISI(n,1) =  NaN;
+                    IC.adaptation2(n,1) = NaN;
+                    IC.hero_amp(n,1) = NaN;
+                elseif length(k) > 1
+                    IC.firing_rate_s_hero(n,1) = mean(IC.firing_rate_s(n,k(1:length(k))));
+                    IC.burst_hero(n,1) = mean(train_burst(n,k(1:length(k))));
+                    IC.delay_hero(n,1) =   mean(train_delay(n,k(1:length(k))));
+                    IC.latency_hero(n,1) = mean(train_latency(n,k(1:length(k))));
+                    IC.cv_ISI(n,1) =   mean(train_cv_ISI(n,k(1:length(k))));
+                    IC.adaptation1(n,1) = mean(train_adaptation1(n,k(1:length(k))));
+                    IC.adaptation2(n,1) = mean(train_adaptation2(n,k(1:length(k))));
+                    IC.hero_amp(n,1) = unique(a.LP.sweepAmps(k));       
+                else
+                    IC.firing_rate_s_hero(n,1) = IC.firing_rate_s(n,k(1:length(k)));
+                    IC.burst_hero(n,1) =  a.LP.stats{k, 1}.burst;
+                    IC.delay_hero(n,1) =   a.LP.stats{k, 1}.delay;
+                    IC.latency_hero(n,1) = a.LP.stats{k, 1}.latency;
+                    IC.cv_ISI(n,1) =   a.LP.stats{k, 1}.cvISI ;  
+                    IC.adaptation1(n,1) = a.LP.stats{k, 1}.adaptIndex; 
+                    IC.adaptation2(n,1) = a.LP.stats{k, 1}.adaptIndex2; 
+                    IC.hero_amp(n,1) = a.LP.sweepAmps(k);
+                end    
+                clear B I idx amp temp k
+            end
         end
     end
 end
+clear cell_reporter_status donor__species line_name specimen__id structure__acronym ...
+    structure__layer tag__dendrite_type
+
+% Cleaning up variables 
+
+IC.resistance_ss(IC.resistance_ss==0)= NaN;                                 % 0 is a non-sensical value in most variables and should be NaN
+IC.resistance_hd(IC.resistance_hd==0)= NaN;
+IC.time_constant(IC.time_constant==0)= NaN;
+IC.Vrest_sag_sweep(IC.Vrest_sag_sweep==0)= NaN;                           
+IC.sag_ratio(IC.sag_ratio==0)= NaN;                                        
+IC.mdn_insta_freq(IC.mdn_insta_freq==0)= NaN;  
+IC.rheobaseLP(IC.rheobaseLP==0)= NaN;  
+IC.hero_amp(IC.hero_amp==0)=NaN;
+IC.firing_rate_s(IC.firing_rate_s==0)= NaN;
+
+fieldnames_var = fieldnames(IC);                                            % Getting the variable names to overwrite in them
+
+for n = 1:length(cellList)  
+    if isnan(IC.resistance_hd(n,1)) || isnan(IC.rheobaseLP(n,1))            % If crucial features cannot be determined, all parameters are set to NaN  
+        for var = 10:length(fieldnames_var)-2                               % Leave the first 7 and last 2 untouched, since they are still usefull
+            IC.(fieldnames_var{var})(n,1) = NaN;
+        end
+    end
+ end
+
+
 return
 % ind = find(diffMinMaxV~=0);
 % figure('Position',[50 50 300 250]); set(gcf,'color','w');
