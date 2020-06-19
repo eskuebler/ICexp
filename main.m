@@ -14,7 +14,7 @@ missingCountLP = 1;         % count cells with missing LP data
 missingCountSP = 1;         % count cells with missing SP data
  
 % enter folder where data resides (each cell needs a folder)
-dataFolder{1} = 'C:\Users\EKuebler\OneDrive - The University of Western Ontario\NHP cell type database (JMT)\01 main';
+dataFolder{1} = 'C:\Users\EKuebler\OneDrive - The University of Western Ontario\NHP cell type database (JMT)\001 main';
 % dataFolder{2} = 'D:\cell data';
 
 start_trees; clear trees    % TREES Toolkit (https://github.com/cuntzlab/treestoolbox)

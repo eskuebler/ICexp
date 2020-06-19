@@ -35,7 +35,8 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
 %         close
     elseif length(LP.putSpTimes2) > 1                                       % if more than one spike
         if i == 1                                                           % if this is first spike
-            [maxdVdt(i), maxdVdtTime(i)] = max(dVdt(1:sp.peakTime(i)-1));   % max change in voltage
+            [maxdVdt(i), maxdVdtTime(i)] = max(dVdt(sp.peakTime(i) - ...
+                (params.maxDiffThreshold2PeakT/LP.acquireRes):sp.peakTime(i)-1));   % max change in voltage
             thresholdTime(i) = find(dVdt(1:maxdVdtTime(i)) < ...
                 (params.pcentMaxdVdt*maxdVdt(i)), 1, 'last');               % 5% of max dV/dt
             threshold(i) = LP.V{1,k}(thresholdTime(i));                     % store threshold for spike
@@ -141,8 +142,8 @@ if params.plot_all == 1
     imagesc(LP.qcRemovals.QCmatT2P)
     colormap('gray')
     colorbar
-    xticks(1:6)
-    xticklabels({'interval','null dV/dt','dV/dt<5mV/ms','threshold>-20mV','t2p<20mV','t2pT>2ms'})
+    xticks(1:5)
+    xticklabels({'interval','null dV/dt','dV/dt<5mV/ms','threshold>-20mV','t2pT>2ms'})
     xtickangle(45)
     ylabel('spike #')
     export_fig([folder(1:length(folder)-8),cellID,' ',int2str(k),' spike QC'],'-pdf','-r100');

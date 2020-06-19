@@ -20,7 +20,7 @@ if round(double(LP.acquireRes),2) ~= params.sampleRTdt
     end
     x = single(x);
 end
-[val,pt] = max(x(1:190));
+[val,pt] = max(x(1:180));
 figure('Position',[50 50 250 200]); set(gcf,'color','w');
 hold on
 plot(x)

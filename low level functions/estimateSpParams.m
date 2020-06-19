@@ -72,11 +72,11 @@ halfHeightTimeDownPT(isnan(halfHeightTimeDownPT)) = [];
 halfHeightTimeUpTP(isnan(halfHeightTimeUpTP)) = [];
 halfHeightTimeDownTP(isnan(halfHeightTimeDownTP)) = [];
 
-if length(heightPT)>1
-    idx = heightPT<params.percentRheobaseHeight*heightPT(1);
+if length(heightTP)>1
+    idx = heightTP<params.percentRheobaseHeight*heightTP(1);
     LP.qcRemovals.percentRheobaseHeight = LP.putSpTimes2(idx);
-    LP.qcRemovals.QCmatpercentRheobaseHeight = heightPT < ...
-        params.percentRheobaseHeight * heightPT(1);
+    LP.qcRemovals.QCmatpercentRheobaseHeight = heightTP < ...
+        params.percentRheobaseHeight * heightTP(1);
     LP.putSpTimes2(idx) = [];
     sp.peak(idx) = []; sp.peakTime(idx) = []; 
     sp.trough(idx) = []; sp.troughTime(idx) = [];
@@ -103,11 +103,10 @@ else
 end
 
 
-if sum(fullWidthTP <= 0.7) > 0        % narrow spiking
+if fullWidthTP(1) <= 0.7        % narrow spiking
     idx = abs(sp.peak-sp.thresholdRef)<params.minDiffThreshold2PeakN;
     LP.qcRemovals.minDiffThreshold2PeakN = LP.putSpTimes2(idx);
-    LP.qcRemovals.QCmatminDiffThreshold2PeakN = heightPT < ...
-        params.percentRheobaseHeight * heightPT(1);
+    LP.qcRemovals.QCmatminDiffThreshold2PeakN = abs(sp.peak-sp.thresholdRef)<params.minDiffThreshold2PeakN;
     LP.putSpTimes2(idx) = [];
     sp.peak(idx) = []; sp.peakTime(idx) = []; 
     sp.trough(idx) = []; sp.troughTime(idx) = [];
@@ -131,8 +130,7 @@ if sum(fullWidthTP <= 0.7) > 0        % narrow spiking
 else                                                        % broad spiking
     idx = abs(sp.peak-sp.thresholdRef)<params.minDiffThreshold2PeakB;
     LP.qcRemovals.minDiffThreshold2PeakB = LP.putSpTimes2(idx);
-    LP.qcRemovals.QCmatminDiffThreshold2PeakB = heightPT < ...
-        params.percentRheobaseHeight * heightPT(1);
+    LP.qcRemovals.QCmatminDiffThreshold2PeakB = abs(sp.peak-sp.thresholdRef)<params.minDiffThreshold2PeakB;
     LP.putSpTimes2(idx) = [];
     sp.peak(idx) = []; sp.peakTime(idx) = []; 
     sp.trough(idx) = []; sp.troughTime(idx) = [];

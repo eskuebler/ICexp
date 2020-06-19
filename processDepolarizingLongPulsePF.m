@@ -7,6 +7,8 @@ processSuprathresholdLongPulsePF
 LP.putSpTimes = LP.stimOn(1,k)+...
     find(LP.V{1,k}(LP.stimOn(1,k):LP.stimOff(1,k))>=params.thresholdV)-1;   % voltage threshold
 LP = getSPdVdt(LP,k,params.thresholdDVDT,cellID,folder,params);             % derivative threshold
+% assess agreement betweeen detection, assign peak based on dV/dt, remove
+% setting of interval for peak detection
 if ~isempty(LP.putSpTimes)                                                  % if no spikes
     [int4Peak,LP.putSpTimes2] = int4APs(LP.putSpTimes);                     % interval for peak voltage
     sp = estimatePeak(LP,int4Peak,k);                                       % estimate of peak

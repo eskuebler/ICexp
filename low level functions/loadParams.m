@@ -27,9 +27,9 @@ p.sampleRTdt = 1000/p.sampleRT;                 % sample rate we want
 p.pcentMaxdVdt = 0.05;                          % threshold = < % of dVdt
 p.minRefract = 0.5;                             % min refractory
 p.mindVdt = 5;                                  % minimum amount of dV/dt
-p.minDiffThreshold2PeakN = 30;                  % max diff in V bw threshold and peak for narrow 
-p.minDiffThreshold2PeakB = 35;                  % max diff in V bw threshold and peak for broad
-p.maxDiffThreshold2PeakT = 2;                   % max diff in t bw threshold and peak
+p.minDiffThreshold2PeakN = 35;                  % max diff in V bw threshold and peak for narrow 
+p.minDiffThreshold2PeakB = 45;                  % max diff in V bw threshold and peak for broad
+p.maxDiffThreshold2PeakT = 1.5;                   % max diff in t bw threshold and peak
 % p.minDiffPeak2Trough = 30;                      % max diff in V bw peak and trough
 % p.maxDiffPeak2TroughT = 10;                     % max diff in t bw peak and trough
 p.percentRheobaseHeight = .3;                   % APs must be X percent of Rheobase height

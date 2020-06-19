@@ -34,7 +34,7 @@ removedListStd = []; rmvdStdCount = 1;
 removedListMinMax = []; rmvdMMCount = 1;
 spqcmat = zeros(length(cellList),60);
 
-for n = 1:281%length(cellList)                                                  % for each cells
+for n = 1:126%length(cellList)                                                  % for each cells
     clc; disp(n)                                                            % display n value
     sweepIDcount = 1;
     
@@ -153,7 +153,7 @@ for n = 1:281%length(cellList)                                                  
             colormap('gray')
             xticks(1:10)
             xticklabels({'interval','null dV/dt','dV/dt<5mV/ms', ...
-                'threshold>-20mV','t2pN(B)<30(35)mV','t2pT>2ms','interval Re', ...
+                'threshold>-20mV','t2pN(B)<35(45)mV','t2pT>1.5ms','interval Re', ...
                 'null dV/dt Re','trough>-30mV','<30% Rheobase height'})
             xtickangle(45)
             ylabel('current input (pA)')
@@ -211,14 +211,14 @@ for n = 1:281%length(cellList)                                                  
                     getSubthresholdStats                                    % get subthreshold stats
                 else                                                        % if no -70 pA sweep
                     k = find(ismember(sweepID(n,:),...
-                        find(round(double(a.LP.sweepAmps)) == -110))==1);    % find -110 pA sweep
+                        find(round(double(a.LP.sweepAmps)) == -110))==1);   % find -110 pA sweep
                     if length(k)>1
                         k = k(1);
                     end
                     if ~isempty(k)
                         getSubthresholdStats                                % get subthreshold stats
                     else                                                    % if no -50 pA sweeps
-                        IC.subamp(n,1) = NaN;                                  % add NaNs (blank spaces in csv format)
+                        IC.subamp(n,1) = NaN;                               % add NaNs (blank spaces in csv format)
                         IC.submin(n,1) = NaN;
                         IC.rebound_slope(n,1) = NaN;
                         IC.rebound_depolarization(n,1) = NaN;
@@ -232,18 +232,23 @@ for n = 1:281%length(cellList)                                                  
 
             % find rheobase and parameters of first spike
             [B,I] = sort(round(double(a.LP.sweepAmps(1:length(a.LP.stats)))));
-            input_current_all(n,1:length(B)) = B;
             int_vec = find(B>0);
             temp = int_vec(find(ismember(int_vec,sweepID(n,:))==1));
             idx = I(temp);
             amp = B(temp);
             IC.input_current_s(n,1:length(amp)) = round(double(a.LP.sweepAmps(idx)));
-
+            
+            spCheck = 0;
             for k = 1:length(idx)
                 if isfield(a.LP.stats{idx(k),1},'spTimes') && ...
                         sum(~isnan(a.LP.stats{idx(k),1}.spTimes))>0
                     % spike train parameters
-                    IC.rate_s(n,k) = a.LP.stats{idx(k),1}.meanFR1000;
+                    IC.rate_1s(n,k) = a.LP.stats{idx(k),1}.meanFR1000;
+                    IC.rate_750ms(n,k) = a.LP.stats{idx(k),1}.meanFR750;
+                    IC.rate_500ms(n,k) = a.LP.stats{idx(k),1}.meanFR500;
+                    IC.rate_250ms(n,k) = a.LP.stats{idx(k),1}.meanFR250;
+                    IC.rate_100ms(n,k) = a.LP.stats{idx(k),1}.meanFR100;
+                    IC.rate_50ms(n,k) = a.LP.stats{idx(k),1}.meanFR50;
                     IC.delay(n,k) = round(double(a.LP.stats{idx(k),1}.delay),2);
                     IC.burst(n,k) = round(double(a.LP.stats{idx(k),1}.burst),2);
                     IC.latency(n,k) = round(double(a.LP.stats{idx(k),1}.latency),2);
@@ -252,6 +257,7 @@ for n = 1:281%length(cellList)                                                  
                     IC.adaptation2(n,k) = round(double(a.LP.stats{idx(k),1}.adaptIndex2),2);
                     IC.peak_adaptation1(n,k) = round(double(a.LP.stats{idx(k),1}.peakAdapt),2);
                     IC.peak_adaptation2(n,k) = round(double(a.LP.stats{idx(k),1}.peakAdapt2),2);
+                    spCheck = 1;
                 end
             end
 
@@ -259,14 +265,20 @@ for n = 1:281%length(cellList)                                                  
                 if isfield(a.LP.stats{idx(k),1},'spTimes') && ...
                         sum(~isnan(a.LP.stats{idx(k),1}.spTimes))>0
                     IC.rheobaseLP(n,1) = amp(k);
-                    IC.delay(n,1) = round(double(a.LP.stats{idx(k),1}.delay),2);
-                    IC.burst(n,1) = round(double(a.LP.stats{idx(k),1}.burst),2);
-                    IC.latency(n,1) = round(double(a.LP.stats{idx(k),1}.latency),2);
-                    IC.cv_ISI(n,1) = round(double(a.LP.stats{idx(k),1}.cvISI),2);
-                    IC.adaptation1(n,1) = round(double(a.LP.stats{idx(k),1}.adaptIndex),2);
-                    IC.adaptation2(n,1) = round(double(a.LP.stats{idx(k),1}.adaptIndex2),2);
-                    IC.peak_adaptation1(n,1) = round(double(a.LP.stats{idx(k),1}.peakAdapt),2);
-                    IC.peak_adaptation2(n,1) = round(double(a.LP.stats{idx(k),1}.peakAdapt2),2);
+                    IC.rate_1sRheobase(n,1) = a.LP.stats{idx(k),1}.meanFR1000;
+                    IC.rate_750msRheobase(n,1) = a.LP.stats{idx(k),1}.meanFR750;
+                    IC.rate_500msRheobase(n,1) = a.LP.stats{idx(k),1}.meanFR500;
+                    IC.rate_250msRheobase(n,1) = a.LP.stats{idx(k),1}.meanFR250;
+                    IC.rate_100msRheobase(n,1) = a.LP.stats{idx(k),1}.meanFR100;
+                    IC.rate_50msRheobase(n,1) = a.LP.stats{idx(k),1}.meanFR50;
+                    IC.delayRheobase(n,1) = round(double(a.LP.stats{idx(k),1}.delay),2);
+                    IC.burstRheobase(n,1) = round(double(a.LP.stats{idx(k),1}.burst),2);
+                    IC.latencyRheobase(n,1) = round(double(a.LP.stats{idx(k),1}.latency),2);
+                    IC.cv_ISIRheobase(n,1) = round(double(a.LP.stats{idx(k),1}.cvISI),2);
+                    IC.adaptation1Rheobase(n,1) = round(double(a.LP.stats{idx(k),1}.adaptIndex),2);
+                    IC.adaptation2Rheobase(n,1) = round(double(a.LP.stats{idx(k),1}.adaptIndex2),2);
+                    IC.peak_adaptation1Rheobase(n,1) = round(double(a.LP.stats{idx(k),1}.peakAdapt),2);
+                    IC.peak_adaptation2Rheobase(n,1) = round(double(a.LP.stats{idx(k),1}.peakAdapt2),2);
                     IC.peakLP(n,1) = round(double(a.LP.stats{idx(k),1}.peak(1)),2);
                     IC.thresholdLP(n,1) = round(double(a.LP.stats{idx(k),1}.thresholdRef(1)),2);
                     IC.half_width_threshold_peak(n,1) = round(double(a.LP.stats{idx(k),1}.fullWidthTP(1)),2);
@@ -296,14 +308,16 @@ for n = 1:281%length(cellList)                                                  
                 end
             end
             
-            % global spiketrain parameters
-            IC.maxFiringRate(n,1) = max(IC.firing_rate_s(n,:));
-            IC.mdn_insta_freq(n,1) = median_isi(a.LP);                      % obtain the median ISI of all suprathreshold sweeps
-          
-            % picking "Hero sweep" for more spike train parameters per cell
+            % global spike parameters and Hero sweep selection
             k = [];                                                         % resetting k for indexing sweeps
             flag = 0;                                                       % variable to fire the if condition in while loop only one time
-            if length(IC.rheobaseLP) == n 
+            if spCheck == 1 
+                
+                % global spiketrain parameters
+                IC.maxFiringRate(n,1) = max(IC.rate_1s(n,:));
+                IC.mdn_insta_freq(n,1) = median_isi(a.LP);                  % obtain the median ISI of all suprathreshold sweeps
+
+                % picking "Hero sweep" for more spike train parameters per cell
                 [~,k] = min(abs(double(B)-(IC.rheobaseLP(n,1)*1.5)));       % hero sweep is 1.5x Rheobase
                 if k > 0                                                    % if there is a sweep 1.5x Rheobase
                     while sum(ismember(sweepID(n,:), k)) == 0 ||       ...
