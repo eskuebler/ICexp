@@ -4,11 +4,11 @@ function [sp] = estimateAPTrainParams(LP,sp,k)
 
 latency = (sp.thresholdRefTime(1)-LP.stimOn(1,k))*LP.acquireRes;
 % not a firing rate, simply a sum of spikes
-meanFR50 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(50/LP.acquireRes)));
-meanFR100 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(100/LP.acquireRes)));
-meanFR250 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(250/LP.acquireRes)));
-meanFR500 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(500/LP.acquireRes)));
-meanFR750 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(750/LP.acquireRes)));
+meanFR50 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(50/LP.acquireRes))) / 0.05;
+meanFR100 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(100/LP.acquireRes))) / 0.1;
+meanFR250 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(250/LP.acquireRes))) / 0.25;
+meanFR500 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(500/LP.acquireRes))) / 0.5;
+meanFR750 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(750/LP.acquireRes))) / 0.75;
 meanFR1000 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(1000/LP.acquireRes)));
 
 if length(sp.thresholdRefTime) >= 2						% skip this sweep if there was only 1 

@@ -34,7 +34,7 @@ removedListStd = []; rmvdStdCount = 1;
 removedListMinMax = []; rmvdMMCount = 1;
 spqcmat = zeros(length(cellList),60);
 
-for n = 1:126%length(cellList)                                                  % for each cells
+for n = 282%1:length(cellList)                                                  % for each cells
     clc; disp(n)                                                            % display n value
     sweepIDcount = 1;
     
@@ -298,9 +298,9 @@ for n = 1:126%length(cellList)                                                  
                         IC.fAHPamp(n,1) = NaN;
                     end
                     if size(a.LP.stats{idx(k),1}.waves,1) > 1
-                        wf(n,:) = round(mean(a.LP.stats{idx(k),1}.waves),2);
+                        IC.wf(n,:) = round(mean(a.LP.stats{idx(k),1}.waves),2);
                     else
-                        wf(n,:) = round(a.LP.stats{idx(k),1}.waves,2);
+                        IC.wf(n,:) = round(a.LP.stats{idx(k),1}.waves,2);
                     end
                     break
                 else
@@ -366,6 +366,9 @@ for n = 1:126%length(cellList)                                                  
         end
     end
 end
+
+IC.cellList = cellList;
+
 clear cell_reporter_status donor__species line_name specimen__id structure__acronym ...
     structure__layer tag__dendrite_type
 
