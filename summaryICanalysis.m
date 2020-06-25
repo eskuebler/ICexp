@@ -343,7 +343,7 @@ for n = 282%1:length(cellList)                                                  
                     IC.adaptation2(n,1) = NaN;
                     IC.hero_amp(n,1) = NaN;
                 elseif length(k) > 1
-                    IC.firing_rate_s_hero(n,1) = mean(IC.firing_rate_s(n,k(1:length(k))));
+                    IC.rate_s_hero(n,1) = mean(IC.rate_1s(n,find(IC.input_current_s(n,:)==a.LP.sweepAmps(k))));;
                     IC.burst_hero(n,1) = mean(train_burst(n,k(1:length(k))));
                     IC.delay_hero(n,1) =   mean(train_delay(n,k(1:length(k))));
                     IC.latency_hero(n,1) = mean(train_latency(n,k(1:length(k))));
@@ -352,7 +352,7 @@ for n = 282%1:length(cellList)                                                  
                     IC.adaptation2(n,1) = mean(train_adaptation2(n,k(1:length(k))));
                     IC.hero_amp(n,1) = unique(a.LP.sweepAmps(k));       
                 else
-                    IC.firing_rate_s_hero(n,1) = IC.firing_rate_s(n,k(1:length(k)));
+                    IC.rate_s_hero(n,1) = IC.rate_1s(n,find(IC.input_current_s(n,:)==a.LP.sweepAmps(k)));
                     IC.burst_hero(n,1) =  a.LP.stats{k, 1}.burst;
                     IC.delay_hero(n,1) =   a.LP.stats{k, 1}.delay;
                     IC.latency_hero(n,1) = a.LP.stats{k, 1}.latency;
