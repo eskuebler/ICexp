@@ -8,8 +8,8 @@ p.thresholdV = -20;                             % detection threshold for V-base
 p.thresholdDVDT = 20;                           % detection threshold for dV/dt-based spikes
 
 % swep-wise root mean square quality control parameters
-p.RMSEst = .2;                                  % maximum RMSE measure short term
-p.RMSElt = 1.05;                                % maximum RMSE measure long term
+p.RMSEst = 0.2;                                 % maximum RMSE measure short term
+p.RMSElt = 0.75;                                % maximum RMSE measure long term
 p.maxDiffBwBeginEnd = 3;                        % maximum difference between beginning and end of sweep
 p.maxDiffBwSweeps = 10;                         % maximum difference b/w sweeps
 p.minimumRestingPot = -50;                      % minimum resting potential
@@ -25,11 +25,12 @@ p.sampleRTdt = 1000/p.sampleRT;                 % sample rate we want
 
 % spike-wise quality control parameters
 p.pcentMaxdVdt = 0.05;                          % threshold = < % of dVdt
+p.absdVdt = 2.9;                                  % threshold = absolute value
 p.minRefract = 0.5;                             % min refractory
 p.mindVdt = 5;                                  % minimum amount of dV/dt
 p.minDiffThreshold2PeakN = 35;                  % max diff in V bw threshold and peak for narrow 
 p.minDiffThreshold2PeakB = 45;                  % max diff in V bw threshold and peak for broad
-p.maxDiffThreshold2PeakT = 1.5;                   % max diff in t bw threshold and peak
+p.maxDiffThreshold2PeakT = 2;                   % max diff in t bw threshold and peak
 % p.minDiffPeak2Trough = 30;                      % max diff in V bw peak and trough
 % p.maxDiffPeak2TroughT = 10;                     % max diff in t bw peak and trough
 p.percentRheobaseHeight = .3;                   % APs must be X percent of Rheobase height

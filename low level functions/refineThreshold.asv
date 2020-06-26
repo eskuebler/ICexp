@@ -7,10 +7,9 @@ thresholdRef = zeros(1,length(LP.putSpTimes2));
 thresholdRefTime = zeros(1,length(LP.putSpTimes2));
 
 for i = 1:length(LP.putSpTimes2)
+    [~, maxdVdtTime(i)] = max(sp.dVdt(1:sp.peakTime(i)-1));                 % max change in voltage
     vec = sp.dVdt(sp.peakTime(i) - (params.maxDiffThreshold2PeakT / ...
         LP.acquireRes) : sp.peakTime(i));                                   % dV/dt vector
-    [~, maxdVdtTime(i)] = max(vec);                                         % max change in voltage
-    vec = vec(1:maxdVdtTime(i));
     if ~isempty(find(vec < (params.pcentMaxdVdt*AVGmaxdVdt),1,'last'))
         thresholdRefTime(i) = find(vec < (params.pcentMaxdVdt* ...
             AVGmaxdVdt), 1, 'last');                                        % 5% of max average dV/dt
@@ -24,15 +23,10 @@ for i = 1:length(LP.putSpTimes2)
                 (params.maxDiffThreshold2PeakT/LP.acquireRes) - 1;          % adjust threshold time for window
             thresholdRef(i) = LP.V{1,k}(thresholdRefTime(i));               % voltage at refined threshold
         else
-            if ~isempty(find(vec < 5, 1, 'last'))
-                thresholdRefTime(i) = find(vec < 5, 1, 'last');                 % abs criteria
-                thresholdRefTime(i) = thresholdRefTime(i)+sp.peakTime(i) - ...
-                    (params.maxDiffThreshold2PeakT/LP.acquireRes) - 1;          % adjust threshold time for window
-                thresholdRef(i) = LP.V{1,k}(thresholdRefTime(i));               % voltage at refined threshold
-            else
-                thresholdRefTime(i) = 0;
-                thresholdRef(i) = 0;
-            end
+            thresholdRefTime(i) = find(vec < 5, 1, 'last');                 % abs criteria
+            thresholdRefTime(i) = thresholdRefTime(i)+sp.peakTime(i) - ...
+                (params.maxDiffThreshold2PeakT/LP.acquireRes) - 1;          % adjust threshold time for window
+            thresholdRef(i) = LP.V{1,k}(thresholdRefTime(i));               % voltage at refined threshold
         end
     end
 end
