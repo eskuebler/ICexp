@@ -1,0 +1,110 @@
+%
+clear; close all; clc
+start_trees
+%free parameters
+dd = 10; %Difference in diameter (um)
+title = 'please find your data folder';
+dataFolder = uigetdir('C:\',title);
+a = dir(dataFolder);
+a = a(2:end);
+fbar = waitbar(0,'Analyzed cells','Name','Progress','CreateCancelBtn' ,'setappdata(gcbf,''canceling'',1)');
+for n=1:length(a)
+    if getappdata(fbar,'canceling')
+        break
+    end
+    waitbar(n/length(a),fbar)
+    dirStr = [a(n,1).folder,'/',a(n,1).name];
+    b = dir(dirStr);
+    b = b(3:end);
+    if length(b) == 22
+        %neurolucida_tree ('Test .ASC','-s')
+        trees = load_tree ([b(2,1).folder,'/',b(2,1).name],'-s');
+        
+        Analysis
+        %export_fig('C:/Users/joshuapoulin/Documents/MATLAB/Trees/Output', '-png', '-transparent')
+     
+        close
+        clear trees intree
+    end
+end
+delete(fbar)
+clear; close all; clc;
+nRows = 4;
+nCols = 2;
+load('Users/joshuapoulin/Documents/MATLAB/Trees/dataStr Allen morphology.mat')
+morphS = s;
+load('Users/joshuapoulin/Documents/MATLAB/Trees/dataStr Allen.mat')
+N = size(morphS.Sholl,1);
+figure
+for n = 1:N
+    if ~isempty(morphS.Sholl{n,1})
+        x = morphS.Sholl{n,1};
+%         minVal = nanmin(x);
+%         maxVal = nanmax(x);
+%         x = (x-minVal)/(maxVal-minVal);
+        x = smoothdata(x,'gaussian',5);
+        [pks{n,1},locs{n,1}] = findpeaks(x,'MinPeakDistance',10);
+        subplot(nRows,nCols,1)
+        hold on
+        if s.dendrite_type(n)=='spiny'
+            plot(x,'k')
+        elseif s.dendrite_type(n)=='aspiny'
+            plot(x,'r')
+        end
+        subplot(nRows,nCols,2)
+        hold on
+        if s.transLine(n)=='Pvalb-IRES-Cre'
+            plot(x,'b')
+        elseif s.transLine(n)=='Vip-IRES-Cre'
+            plot(x,'r')
+        elseif s.transLine(n)=='Sst-IRES-Cre'
+            plot(x,'g')
+        end
+        clear x
+
+        x = morphS.Stats{n,1}.dstats.BO{1,1};
+%         minVal = nanmin(x);
+%         maxVal = nanmax(x);
+%         x = (x-minVal)/(maxVal-minVal);
+        x = smoothdata(x,'gaussian',5);
+        [pks{n,1},locs{n,1}] = findpeaks(x,'MinPeakDistance',10);
+        subplot(nRows,nCols,3)
+        hold on
+        if s.dendrite_type(n)=='spiny'
+            plot(x,'k')
+        elseif s.dendrite_type(n)=='aspiny'
+            plot(x,'r')
+        end
+        subplot(nRows,nCols,4)
+        hold on
+        if s.transLine(n)=='Pvalb-IRES-Cre'
+            plot(x,'b')
+        elseif s.transLine(n)=='Vip-IRES-Cre'
+            plot(x,'r')
+        elseif s.transLine(n)=='Sst-IRES-Cre'
+            plot(x,'g')
+        end
+        clear x
+        
+%         x = morphS.Stats{n,1}.dstats.Plen{1,1};
+%         y = morphS.Stats{n,1}.dstats.peucl{1,1};
+        
+%         tort = x/y;
+    end
+end
+subplot(nRows,nCols,1)
+xlabel('distance from soma (um)')
+ylabel('frequency')
+legend({'aspiny','spiny'})
+subplot(nRows,nCols,2)
+xlabel('distance from soma (um)')
+ylabel('frequency')
+legend({'Vip-IRES-Cre','Pvalb-IRES-Cre','Sst-IRES-Cre'})
+subplot(nRows,nCols,3)
+xlabel('branching order')
+ylabel('frequency')
+legend({'aspiny','spiny'})
+subplot(nRows,nCols,4)
+xlabel('branching order')
+ylabel('frequency')
+legend({'Vip-IRES-Cre','Pvalb-IRES-Cre','Sst-IRES-Cre'})
