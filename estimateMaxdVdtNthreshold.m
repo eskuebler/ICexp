@@ -40,10 +40,10 @@ for i = 1:length(LP.putSpTimes2)                                            % fo
             threshold(i) = LP.V{1,k}(thresholdTime(i));                     % store threshold for spike
         else
             if ~isempty(find(vec < 5, 1, 'last'))
-                thresholdTime(i) = find(vec < 5, 1, 'last');                    % absolute criterium dV/dt
+                thresholdTime(i) = find(vec < 5, 1, 'last');                % absolute criterium dV/dt
                 thresholdTime(i) = thresholdTime(i) + sp.peakTime(i) - ...
-                    (params.maxDiffThreshold2PeakT/LP.acquireRes) - 1;          % adjust threshold time for window
-                threshold(i) = LP.V{1,k}(thresholdTime(i));                     % store threshold for spike
+                    (params.maxDiffThreshold2PeakT/LP.acquireRes) - 1;      % adjust threshold time for window
+                threshold(i) = LP.V{1,k}(thresholdTime(i));                 % store threshold for spike
             else
                 thresholdTime(i) = 0;
                 threshold(i) = 0;

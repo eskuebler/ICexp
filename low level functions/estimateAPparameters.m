@@ -92,7 +92,7 @@ else
             if i < length(Put2APTimes)
                 [slow_trough(i),slow_trough_dur(i)] = min(voltage_data(peakTime(i):peakTime(i+1)));
             else
-                [slow_trough(i),slow_trough_dur(i)] = min(voltage_data(peakTime(i):peakTime(i)+(100/acquireRes)));
+                [slow_trough(i),slow_trough_dur(i)] = min(voltage_data(peakTime(i):peakTime(i)+(150/acquireRes)));
             end
         end 
         clear i temp temp2 dVdt

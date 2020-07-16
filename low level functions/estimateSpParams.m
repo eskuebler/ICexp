@@ -62,7 +62,7 @@ for i = 1:length(sp.peakTime)
     if i < length(sp.peakTime)
         [slow_trough(i),slow_trough_dur(i)] = min(LP.V{1,k}(sp.peakTime(i):sp.peakTime(i+1)));
     else
-        [slow_trough(i),slow_trough_dur(i)] = min(LP.V{1,k}(sp.peakTime(i):sp.peakTime(i)+(100/LP.acquireRes)));
+        [slow_trough(i),slow_trough_dur(i)] = min(LP.V{1,k}(sp.peakTime(i):sp.peakTime(i)+(300/LP.acquireRes)));
     end
 end 
 

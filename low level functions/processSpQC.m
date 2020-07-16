@@ -209,7 +209,7 @@ if isfield(a.LP.stats{k,1},'qcRemovals') && ...
         xlim([0.5 length(spid)+0.5])
         ylim([0 1.1])
         title([int2str(a.LP.sweepAmps(k,1)),' pA'])
-        export_fig(['D:\my\genpath\',cellID,' ',int2str(k),' spike QC (binary removals)'],'-pdf','-r100');
+%         export_fig(['D:\my\genpath\',cellID,' ',int2str(k),' spike QC (binary removals)'],'-pdf','-r100');
         close        
         
 %         if length(unique(vectag))>1
