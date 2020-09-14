@@ -3,7 +3,7 @@ function at = processICsweepsParFor
 processICsweepsParFor
 - analysis of intracellular hyperpolarizing and depolarizing sweeps
 %}
-mainFolder = 'D:\my\';                                                      % main folder (EDIT HERE) 
+mainFolder = 'D:\my\';                                                      % main folder (EDIT HERE)
 folder = [mainFolder,'genpath\genpath\'];                                   % general path
 cellList = dir([folder,'*.mat']);                                           % list of cell data files
 tic;       %10:11                                                                 % initialize clock
