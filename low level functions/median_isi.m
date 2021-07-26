@@ -1,15 +1,11 @@
-function output = median_isi(LP)
+function [output,isis] = median_isi(LP)
 isis = [];
-k = [];
 
 for k = 1:length(LP.stats)
-   if  isfield(LP.stats{k, 1},'spTimes') 
-    if LP.stats{k, 1}.spTimes > 0
+   if isfield(LP.stats{k, 1},'ISI')
        isis = [isis, LP.stats{k, 1}.ISI];
-    end
    end
 end
 
-output = 1000/(median(isis));
-
-close
+output = 1000/(nanmedian(isis));
+end

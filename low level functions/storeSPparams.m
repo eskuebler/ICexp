@@ -31,7 +31,7 @@ supraStats.qcRemovals.QCmatpercentRheobaseHeight = LP.qcRemovals.QCmatpercentRhe
 
 supraStats.spTimes = LP.putSpTimes2;
 supraStats.peak = sp.peak; 
-supraStats.peakTime = sp.peakTime;
+supraStats.peakTime = sp.peakTime-LP.stimOn(1,k);
 supraStats.maxdVdt = sp.maxdVdt;
 supraStats.maxdVdtTime = sp.maxdVdtTime;
 supraStats.threshold = sp.threshold;
@@ -59,6 +59,7 @@ supraStats.meanFR250 = sp.meanFR250;
 supraStats.meanFR500 = sp.meanFR500;
 supraStats.meanFR750 = sp.meanFR750;
 supraStats.meanFR1000 = sp.meanFR1000;
+supraStats.frIntWindows = sp.frIntWindows;
 supraStats.peakAdapt = sp.peakAdapt;
 supraStats.ISI = sp.ISI;
 supraStats.instaRate = sp.instaRate;

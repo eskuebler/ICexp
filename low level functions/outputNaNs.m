@@ -141,6 +141,7 @@ supraStats.meanFR250 = NaN;
 supraStats.meanFR500 = NaN;
 supraStats.meanFR750 = NaN;
 supraStats.meanFR1000 = NaN;
+supraStats.frIntWindows = NaN;
 supraStats.peakAdapt = NaN;
 supraStats.ISI = NaN;
 supraStats.instaRate = NaN;

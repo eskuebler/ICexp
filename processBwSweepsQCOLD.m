@@ -10,7 +10,7 @@ if length(vec) > 1                                                          % if
         stdOrigV(n,1) = round(std(vec),2);                                  % s.d. original voltages
         meanOrigV(n,1) = round(mean(vec),2);                                % mean original voltages
         if stdOrigV(n,1) > origStdThresMax                                  % if s.d. > max threshold
-            removedListStd{rmvdStdCount,1} = IC.cellID{n,:};                % add ID to s.d. remove cell list
+            removedListStd{rmvdStdCount,1} = cellID;                        % add ID to s.d. remove cell list
             rmvdStdCount = rmvdStdCount + 1;
             sweepID(n,:) = 0;                                               % clear count QC vector
             sweepBinary(n,:) = 0;                                           % clear binary QC vector
@@ -57,7 +57,7 @@ if length(vec) > 1                                                          % if
 %             close                                                           % close figure
         end
     else
-        removedListMinMax{rmvdMMCount,1} = IC.cellID{n,:};                  % add to min/max remove cell list
+        removedListMinMax{rmvdMMCount,1} = cellID;                          % add to min/max remove cell list
         rmvdMMCount = rmvdMMCount + 1;
         sweepID(n,:) = 0;                                                   % clear count QC vector
         sweepBinary(n,:) = 0;                                               % clear binary QC vector

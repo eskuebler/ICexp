@@ -7,7 +7,7 @@ p.plot_all = 0;
 p.thresholdV = -20;                             % detection threshold for V-based spikes
 p.thresholdDVDT = 20;                           % detection threshold for dV/dt-based spikes
 
-% swep-wise root mean square quality control parameters
+% sweep-wise root mean square quality control parameters
 p.RMSEst = 0.2;                                 % maximum RMSE measure short term
 p.RMSElt = 0.75;                                % maximum RMSE measure long term
 p.maxDiffBwBeginEnd = 3;                        % maximum difference between beginning and end of sweep
@@ -38,3 +38,5 @@ p.maxThreshold = -27.5;                           % above this value APs are eli
 p.minTrough = -30;                              % above this value APs are eliminated (mV)
 
 % check p.minTrough (any removals) p.minTrough adjusted to threshold
+
+p.shortTwin = 3.5;

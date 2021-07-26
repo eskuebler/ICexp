@@ -4,8 +4,10 @@ function supraStats = processDepolarizingLongPulsePF(LP,params,k, ...
 processSuprathresholdLongPulsePF
 - analysis of depolarizing sweeps
 %}
+
 LP.putSpTimes = LP.stimOn(1,k)+...
-    find(LP.V{1,k}(LP.stimOn(1,k):LP.stimOff(1,k))>=params.thresholdV)-1;   % voltage threshold
+    find(LP.V{1,k}(LP.stimOn(1,k):LP.stimOff(1,k)+ (50/LP.acquireRes))...
+    >=params.thresholdV)-1;                                                 % voltage threshold
 LP = getSPdVdt(LP,k,params.thresholdDVDT,cellID,folder,params);             % derivative threshold
 % assess agreement betweeen detection, assign peak based on dV/dt, remove
 % setting of interval for peak detection
@@ -17,7 +19,7 @@ if ~isempty(LP.putSpTimes)                                                  % if
         [sp,LP] = refineThreshold(LP,sp,k,params);                          % refine threshold estimate
         [sp,LP] = estimateTrough(LP,sp,k,params);                           % estimate trough
         if ~isempty(sp.peak)                                                % if no spikes
-            [sp,LP] = estimateSpParams(LP,sp,k,params);                     % estimate spike parameters
+            [sp,LP] = estimateSpParams(LP,sp,k,params,cellID,folder);       % estimate spike parameters
             if ~isempty(sp.peak)                                            % if no spikes
                 sp = estimateAPTrainParams(LP,sp,k);                        % estimate spike train parameters
                 % estimate plateau potential

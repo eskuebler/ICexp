@@ -21,11 +21,11 @@ if round(double(LP.acquireRes),2) ~= params.sampleRTdt
     x = single(x);
 end
 [val,pt] = max(x(1:180));
-figure('Position',[50 50 250 200]); set(gcf,'color','w');
-hold on
-plot(x)
-scatter(pt,val)
-close
+% figure('Position',[50 50 250 200]); set(gcf,'color','w');
+% hold on
+% plot(x)
+% scatter(pt,val)
+% close
 wf = x(pt-params.windowBegS:pt+params.windowEndS);
 
 %{

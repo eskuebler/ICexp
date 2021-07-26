@@ -23,6 +23,7 @@ x = single(x);
 % output = smoothdata(dVdt,'gaussian',15,'SamplePoints',1:length(dVdt));
 
 dVdt = diff(x)/(1000/5e4);              % dV/dt at 50 kHz
+LP.dVdt{1,k} = smooth(diff(LP.V{1,k})/LP.acquireRes);   % dV/dt at original kHz
 
 if params.plot_all == 1
     figure('Position',[50 50 600 400]); set(gcf,'color','w');

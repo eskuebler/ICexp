@@ -11,6 +11,9 @@ meanFR500 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(500/LP.acquireRes))) / 0.5;
 meanFR750 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(750/LP.acquireRes))) / 0.75;
 meanFR1000 = sum(sp.thresholdRefTime<(LP.stimOn(1,k)+(1000/LP.acquireRes)));
 
+spT = sp.thresholdRefTime*LP.acquireRes/1000;
+fR = fRateTwindows(spT,1);
+
 if length(sp.thresholdRefTime) >= 2						% skip this sweep if there was only 1 
     peakAdapt = sp.heightTP(end) / sp.heightTP(1);
     ISI = diff(sp.thresholdRefTime)*LP.acquireRes;
@@ -71,3 +74,4 @@ sp.adaptIndex2 = adaptIndex2;
 sp.peakAdapt2 = peakAdapt2;
 sp.delay = delay;
 sp.burst = burst;
+sp.frIntWindows = max(fR);

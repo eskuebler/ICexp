@@ -132,8 +132,8 @@ if isfield(a.LP.stats{k,1},'qcRemovals') && ...
             sum(~isnan(a.LP.stats{k,1}.spTimes))>0
         
         spvec = abs(a.LP.stimOn(k)-a.LP.stats{k,1}.spTimes) * ...
-            a.LP.acquireRes(1,1);                                           % spike times that pass QC relative to stimulus
-        vec = abs(a.LP.stimOn(k)-vec)*a.LP.acquireRes(1,1);                 % spike times that do not pass QC relative to stimulus
+            a.LP.acquireRes(1,1);                                                % spike times that pass QC relative to stimulus
+        vec = abs(a.LP.stimOn(k)-vec)*a.LP.acquireRes;                      % spike times that do not pass QC relative to stimulus
         sp = [spvec,vec];                                                   % concatenate good and bad spikes
         spid = [ones(1,length(spvec)),zeros(1,length(vec))];                % give a tag for good and bad spikes
         [~,I] = sort(sp); spid = spid(I);                                   % sort the good and bad spike tags

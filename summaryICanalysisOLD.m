@@ -5,7 +5,7 @@ summaryICanalysis
 clear; close all; clc;                                                      % prepare Matlab workspace
 
 % list of cells
-mainFolder = 'D:\Allen Institute Data\patchclamp\my\';                                                      % main folder for data (EDIT HERE)
+mainFolder = 'D:\Allen Institute Data\patchclamp\my\';                                                          % main folder for data (EDIT HERE)
 cellList = dir([mainFolder,'genpath\*.mat']);                               % cell list
     
 % free parameters (across sweep QC)
@@ -46,29 +46,60 @@ for n = 1:length(cellList)                                                  % fo
     end
 
     
-    % match species ID # to get Allen parameters
-    k  = find(specimen__id1==str2num(cellID));
+    % pull data for AIBS cell
+    if length(cellID) == 9                                                  % if an Allen cell
+        % match species ID # to get Allen parameters
+        k  = find(specimen__id1==str2num(cellID));
 
-    % get Allen Institute parameters
-    IC.ID(n,:) = ([num2str(specimen__id1(k)),'__AI']);
-    IC.specimen(n,1) = donor__species1(k);
-    IC.struct(n,1) = structure__acronym1(k);
-    IC.cortical_layer(n,1) = categorical(structure__layer1(k));
-    IC.cort_depth(n,1) = csl__normalized_depth(k);
-    IC.transline(n,1) = line_name1(k);
-    IC.reporterStatus(n,1) = cell_reporter_status1(k);
-    IC.dendrite_type(n,1) = tag__dendrite_type1(k);
-    IC.AIr(n,1) = ef__ri1(k);
-    IC.AItau(n,1) = ef__tau1(k);
-    IC.AIrheobase(n,1) = round(ef__threshold_i_long_square1(k));
-    if sum(ismember(pyrID,str2num(IC.ID(n,1:9))))
-        IC.pyramidalID(n,1) = 1;
-    else
-        IC.pyramidalID(n,1) = 0;
-    end
-    IC.access_resistance(n,1) = NaN;
-    IC.temperature(n,1) = 0;
+        % get Allen Institute parameters
+        IC.ID(n,:) = ([num2str(specimen__id1(k)),'__AI']);
+        IC.specimen(n,1) = donor__species1(k);
+        IC.struct(n,1) = structure__acronym1(k);
+        IC.cortical_layer(n,1) = categorical(structure__layer1(k));
+        IC.cort_depth(n,1) = csl__normalized_depth(k);
+        IC.transline(n,1) = line_name1(k);
+        IC.reporterStatus(n,1) = cell_reporter_status1(k);
+        IC.dendrite_type(n,1) = tag__dendrite_type1(k);
+        IC.AIr(n,1) = ef__ri1(k);
+        IC.AItau(n,1) = ef__tau1(k);
+        IC.AIrheobase(n,1) = round(ef__threshold_i_long_square1(k));
+        if sum(ismember(pyrID,str2num(IC.ID(n,1:9))))
+            IC.pyramidalID(n,1) = 1;
+        else
+            IC.pyramidalID(n,1) = 0;
+        end
+        IC.access_resistance(n,1) = NaN;
+        IC.temperature(n,1) = 0;
         
+    % pull data for PCTD cell
+    else                                                                    % if a JMT cell
+        IC.ID(n,:) = cellID;
+        IC.specimen(n,:) = categorical(cellstr('NHP'));
+        IC.struct(n,:) = categorical(cellstr('PFC'));
+        IC.transline(n,:) = categorical(cellstr('N/A'));
+        IC.reporterStatus(n,:) = categorical(cellstr('N/A'));
+        IC.AIr(n,1) = NaN;
+        IC.AItau(n,1) = NaN;
+        IC.AIrheobase(n,1) = NaN;
+        IC.pyramidalID(n,1) = NaN;
+        if sum(ismember(layerID,cellID))
+            k = find(ismember(layerID,cellID)==1);
+%             if AccesResistance(k,1) ~= 'N/A'                              
+%                 IC.access_resistance(n,1) = ...
+%                     str2num(char(AccesResistance(k,1)));
+%             end
+            IC.dendrite_type(n,1) = dendrite_typeMJ(k,1);
+            IC.cortical_layer(n,1) = Layer(k,1);
+%             if Temperature(k,1) ~= 'N/A'
+%                 IC.temperature(n,1) = str2num(char(Temperature(k,1)));
+%             end
+        else
+            IC.access_resistance(n,1) = NaN;
+            IC.dendrite_type(n,1) = categorical(cellstr('N/A'));
+            IC.cortical_layer(n,1) = categorical(cellstr('N/A'));
+            IC.temperature(n,1) = 0;
+        end
+    end
 
     % load our analysis
     load([mainFolder,'genpath\',cellList(n).name]);                         % load analysis file for cell
@@ -76,7 +107,7 @@ for n = 1:length(cellList)                                                  % fo
     % qc stuff
     qc_logic = zeros(1,6);                                                  % initialize QC matrix
 
-%     if a.LP.fullStruct == 1                                                 % if full data structure is available
+    if a.LP.fullStruct == 1                                                 % if full data structure is available
         qcID{n,1} = cellID;                                                 % cell ID
         qc_V_vec(n,1:length(a.LP.rmp(1,:))) = round(a.LP.rmp(1,:),2);       % resting membrane potential
         qc_V_vecDelta(n,1:length(a.LP.rmp(1,:))) = ...
@@ -100,7 +131,7 @@ for n = 1:length(cellList)                                                  % fo
             qc_logic = qc_logic+a.LP.stats{k,1}.qc.logicVec;                % QC logic vector (each column is a criteria)
             
             % spike-wise QC processing            
-            processSpQC                                                     % process spike-wise QC
+            processSpQCOLD                                                     % process spike-wise QC
             % remove sweeps that exceed good/bad spike ratio  0.3
             % add to QC vec
             
@@ -147,8 +178,8 @@ for n = 1:length(cellList)                                                  % fo
         end
         % add sp qc
         qc_logic_mat(n,1:6) = qc_logic;
-        processBwSweepsQC                                                   % across sweep QC
-%     end
+        processBwSweepsQCOLD                                                   % across sweep QC
+    end
     if size(qc_class_mat,1)~=n
         qc_class_mat(n,:) = 0;
     end
@@ -309,7 +340,8 @@ for n = 1:length(cellList)                                                  % fo
                 
                 % global spiketrain parameters
                 IC.maxFiringRate(n,1) = max(IC.rate_1s(n,:));
-                IC.mdn_insta_freq(n,1) = median_isi(a.LP);                  % obtain the median ISI of all suprathreshold sweeps
+                [IC.mdn_insta_freq(n,1),IC.mdn_insta_freq_times{n,1}] ...
+                    = median_isi(a.LP);                                     % obtain the median ISI of all suprathreshold sweeps
                 
                 % picking "Hero sweep" for more spike train parameters per cell
                 [~,k] = min(abs(double(B)-(IC.rheobaseLP(n,1)*1.5)));        % hero sweep is 1.5x Rheobase
