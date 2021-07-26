@@ -1,3 +1,4 @@
+function fR = fRateTwindows(sp,tEnd)
 
 shift = 0.1;
 
